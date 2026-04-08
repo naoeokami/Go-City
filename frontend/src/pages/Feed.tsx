@@ -1,0 +1,139 @@
+// src/pages/Feed.tsx
+import { useState }       from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Send }    from 'lucide-react'
+import toast              from 'react-hot-toast'
+import { PostCard }       from '../components/feed/PostCard'
+import { Avatar }         from '../components/ui/Avatar'
+import { Button }         from '../components/ui/Button'
+import { useAuthStore }   from '../store/useAuthStore'
+import { postService }    from '../services/post.service'
+
+export function FeedPage() {
+  const { user }        = useAuthStore()
+  const queryClient     = useQueryClient()
+  const [content, setContent]     = useState('')
+  const [sport, setSport]         = useState('')
+
+  const { data: posts, isLoading } = useQuery({
+    queryKey: ['feed'],
+    queryFn:  () => postService.getFeed(),
+  })
+
+  const createPostMutation = useMutation({
+    mutationFn: () => postService.create({
+      content,
+      sport: sport || undefined,
+    }),
+    onSuccess: () => {
+      setContent('')
+      setSport('')
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
+      toast.success('Post publicado!')
+    },
+    onError: () => toast.error('Erro ao publicar post'),
+  })
+
+  const sports = [
+    'Futebol', 'Basquete', 'Vôlei', 'Tênis',
+    'Natação', 'Atletismo', 'Futsal', 'Handebol',
+  ]
+
+  return (
+    <div className="max-w-xl mx-auto">
+
+      {/* Criar Post */}
+      <div className="card mb-6">
+        <div className="flex gap-3">
+          <Avatar
+            src={user?.avatarUrl}
+            name={user?.name || 'U'}
+            size="md"
+          />
+          <div className="flex-1">
+            <textarea
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              placeholder="O que está acontecendo no mundo esportivo? ⚽🏀🎾"
+              rows={3}
+              className="w-full resize-none outline-none text-gray-800
+                         placeholder-gray-400 text-sm"
+            />
+
+            {/* Seletor de esporte */}
+            {content && (
+              <div className="flex gap-2 flex-wrap mt-2">
+                {sports.map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setSport(sport === s ? '' : s)}
+                    className={`text-xs px-2 py-1 rounded-full border transition-colors ${
+                      sport === s
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'border-gray-300 text-gray-600 hover:border-blue-400'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between mt-2 pt-2
+                            border-t border-gray-100">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">
+                  {content.length}/500
+                </span>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => createPostMutation.mutate()}
+                disabled={!content.trim() || content.length > 500}
+                loading={createPostMutation.isPending}
+              >
+                <Send className="w-3.5 h-3.5" />
+                Publicar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de Posts */}
+      {isLoading ? (
+        <div className="space-y-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="card animate-pulse">
+              <div className="flex gap-3 mb-3">
+                <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 bg-gray-200 rounded w-32" />
+                  <div className="h-3 bg-gray-200 rounded w-24" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded" />
+                <div className="h-3 bg-gray-200 rounded w-3/4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : posts?.length === 0 ? (
+        <div className="card text-center py-12">
+          <p className="text-4xl mb-3">🏟️</p>
+          <p className="font-semibold text-gray-700 mb-1">
+            Seu feed está vazio
+          </p>
+          <p className="text-sm text-gray-500">
+            Siga outros atletas e fãs para ver as publicações aqui!
+          </p>
+        </div>
+      ) : (
+        posts?.map(post => (
+          <PostCard key={post.id} post={post} />
+        ))
+      )}
+    </div>
+  )
+}

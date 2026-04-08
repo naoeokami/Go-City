@@ -1,0 +1,21 @@
+src/components/championship/ChampionshipCard.tsx(6,10): error TS1484: 'Championship' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/feed/PostCard.tsx(7,10): error TS1484: 'Post' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/layout/Sidebar.tsx(4,17): error TS6133: 'User' is declared but its value is never read.
+src/components/layout/Sidebar.tsx(5,12): error TS6133: 'BookMarked' is declared but its value is never read.
+src/components/ui/Button.tsx(2,10): error TS1484: 'ButtonHTMLAttributes' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/ui/Input.tsx(2,10): error TS1484: 'InputHTMLAttributes' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/auth/Login.tsx(6,18): error TS6133: 'Mail' is declared but its value is never read.
+src/pages/auth/Login.tsx(6,24): error TS6133: 'Lock' is declared but its value is never read.
+src/pages/ChampionshipDetail.tsx(6,21): error TS6133: 'Award' is declared but its value is never read.
+src/pages/ChampionshipDetail.tsx(18,9): error TS6133: 'user' is declared but its value is never read.
+src/pages/Championships.tsx(4,16): error TS6133: 'Search' is declared but its value is never read.
+src/pages/Championships.tsx(4,24): error TS6133: 'Filter' is declared but its value is never read.
+src/pages/Feed.tsx(4,16): error TS6133: 'Image' is declared but its value is never read.
+src/pages/Profile.tsx(2,21): error TS6133: 'Link' is declared but its value is never read.
+src/pages/Profile.tsx(4,38): error TS6133: 'UserMinus' is declared but its value is never read.
+src/services/auth.service.ts(3,10): error TS1484: 'AuthResponse' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/auth.service.ts(3,24): error TS1484: 'User' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/championship.service.ts(3,10): error TS1484: 'Championship' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/championship.service.ts(3,24): error TS1484: 'PaginatedResponse' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/post.service.ts(3,10): error TS1484: 'Post' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/store/useAuthStore.ts(4,10): error TS1484: 'User' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
