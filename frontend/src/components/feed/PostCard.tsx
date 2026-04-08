@@ -6,6 +6,7 @@ import { Heart, MessageCircle, Share2, BadgeCheck } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Post }       from '../../types'
 import { Avatar }     from '../ui/Avatar'
+import { ImageModal } from '../ui/ImageModal'
 import { postService } from '../../services/post.service'
 import toast          from 'react-hot-toast'
 
@@ -15,6 +16,7 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const [showComments, setShowComments] = useState(false)
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
   const queryClient = useQueryClient()
 
   const likeMutation = useMutation({
@@ -69,11 +71,24 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Imagem */}
       {post.imageUrl && (
-        <img
-          src={post.imageUrl}
-          alt="Post"
-          className="w-full rounded-lg mb-3 max-h-80 object-cover"
-        />
+        <>
+          <div 
+            className="cursor-pointer overflow-hidden rounded-lg mb-3 bg-gray-50 flex items-center justify-center group"
+            onClick={() => setIsImageModalOpen(true)}
+          >
+            <img
+              src={post.imageUrl}
+              alt="Post"
+              className="w-full h-full max-h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+          
+          <ImageModal 
+            isOpen={isImageModalOpen}
+            onClose={() => setIsImageModalOpen(false)}
+            imageUrl={post.imageUrl}
+          />
+        </>
       )}
 
       {/* Ações */}
