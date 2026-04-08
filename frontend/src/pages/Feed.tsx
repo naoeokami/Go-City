@@ -1,19 +1,22 @@
 // src/pages/Feed.tsx
 import { useState }       from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Send }    from 'lucide-react'
+import { Send, Image as ImageIcon, X }    from 'lucide-react'
 import toast              from 'react-hot-toast'
 import { PostCard }       from '../components/feed/PostCard'
 import { Avatar }         from '../components/ui/Avatar'
 import { Button }         from '../components/ui/Button'
 import { useAuthStore }   from '../store/useAuthStore'
 import { postService }    from '../services/post.service'
+import { uploadService } from '../services/upload.service'
 
 export function FeedPage() {
   const { user }        = useAuthStore()
   const queryClient     = useQueryClient()
   const [content, setContent]     = useState('')
   const [sport, setSport]         = useState('')
+  const [imageUrl, setImageUrl]   = useState('')
+  const [isUploading, setIsUploading] = useState(false)
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ['feed'],
@@ -24,10 +27,12 @@ export function FeedPage() {
     mutationFn: () => postService.create({
       content,
       sport: sport || undefined,
+      imageUrl: imageUrl || undefined,
     }),
     onSuccess: () => {
       setContent('')
       setSport('')
+      setImageUrl('')
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       toast.success('Post publicado!')
     },
@@ -38,6 +43,22 @@ export function FeedPage() {
     'Futebol', 'Basquete', 'Vôlei', 'Tênis',
     'Natação', 'Atletismo', 'Futsal', 'Handebol',
   ]
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      setIsUploading(true)
+      const res = await uploadService.uploadImage(file)
+      setImageUrl(res.url)
+      toast.success('Imagem carregada!')
+    } catch (err) {
+      toast.error('Erro ao subir imagem')
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   return (
     <div className="max-w-xl mx-auto">
@@ -79,9 +100,36 @@ export function FeedPage() {
               </div>
             )}
 
+            {/* Preview da Imagem */}
+            {imageUrl && (
+              <div className="relative mt-3 inline-block">
+                <img
+                  src={imageUrl}
+                  alt="Post preview"
+                  className="max-h-60 rounded-lg border border-gray-100"
+                />
+                <button
+                  onClick={() => setImageUrl('')}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1
+                             hover:bg-red-600 transition-colors shadow-md"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             <div className="flex items-center justify-between mt-2 pt-2
                             border-t border-gray-100">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
+                <label className={`cursor-pointer transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : 'text-gray-400 hover:text-blue-500'}`}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                  <ImageIcon className="w-5 h-5" />
+                </label>
                 <span className="text-xs text-gray-400">
                   {content.length}/500
                 </span>
