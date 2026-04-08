@@ -32,7 +32,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name:       'sportconnect-auth',
-      partialize: (state) => ({ token: state.token, user: state.user }),
+      partialize: (state) => ({ token: state.token, user: state.user, isLogged: state.isLogged }),
     }
   )
 )
