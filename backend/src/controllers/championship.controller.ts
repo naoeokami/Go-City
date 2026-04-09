@@ -106,6 +106,13 @@ export async function getChampionship(req: Request, res: Response) {
       results: {
         orderBy: { date: 'desc' },
       },
+      matches: {
+        include: {
+          team1: true,
+          team2: true,
+        },
+        orderBy: { date: 'asc' },
+      },
       _count: {
         select: { registrations: true },
       },

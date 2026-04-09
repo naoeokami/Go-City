@@ -13,6 +13,9 @@ import { ChampionshipDetailPage } from './pages/ChampionshipDetail'
 import { ChampionshipCreatePage } from './pages/ChampionshipCreate'
 import { ExplorePage }            from './pages/Explore'
 import { NotificationsPage }      from './pages/Notifications'
+import { TeamsPage }              from './pages/Teams'
+import { TeamDetailPage }          from './pages/TeamDetail'
+import { MessagesPage }           from './pages/Messages'
 import { useAuthStore }           from './store/useAuthStore'
 
 const queryClient = new QueryClient({
@@ -57,6 +60,9 @@ export default function App() {
             <Route path="championships/:id"  element={<ChampionshipDetailPage />} />
             <Route path="explore"            element={<ExplorePage />} />
             <Route path="notifications"      element={<NotificationsPage />} />
+            <Route path="teams"              element={<TeamsPage />} />
+            <Route path="teams/:id"          element={<TeamDetailPage />} />
+            <Route path="messages"           element={<MessagesPage />} />
             <Route path="profile/:username"  element={<ProfilePage />} />
           </Route>
 

@@ -1,7 +1,7 @@
 // src/pages/Profile.tsx
-import { useParams }         from 'react-router-dom'
+import { useParams, useNavigate }         from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { MapPin, Calendar, UserPlus } from 'lucide-react'
+import { MapPin, Calendar, UserPlus, MessageSquare } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR }   from 'date-fns/locale'
 import toast      from 'react-hot-toast'
@@ -22,6 +22,7 @@ const userTypeLabels = {
 
 export function ProfilePage() {
   const { username }    = useParams<{ username: string }>()
+  const navigate        = useNavigate()
   const { user: me }    = useAuthStore()
   const queryClient     = useQueryClient()
 
@@ -81,21 +82,31 @@ export function ProfilePage() {
           </div>
 
           {!isOwnProfile && (
-            <Button
-              variant={profile.isFollowing ? "outline" : "default"}
-              size="sm"
-              onClick={() => followMutation.mutate()}
-              loading={followMutation.isPending}
-            >
-              {profile.isFollowing ? (
-                <>Seguindo</>
-              ) : (
-                <>
-                  <UserPlus className="w-4 h-4" />
-                  Seguir
-                </>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/messages', { state: { selectedUser: profile } })}
+              >
+                <MessageSquare className="w-4 h-4" />
+                Mensagem
+              </Button>
+              <Button
+                variant={profile.isFollowing ? "outline" : "default"}
+                size="sm"
+                onClick={() => followMutation.mutate()}
+                loading={followMutation.isPending}
+              >
+                {profile.isFollowing ? (
+                  <>Seguindo</>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4" />
+                    Seguir
+                  </>
+                )}
+              </Button>
+            </div>
           )}
         </div>
 

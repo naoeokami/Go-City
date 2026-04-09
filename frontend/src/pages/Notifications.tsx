@@ -5,7 +5,9 @@ import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { notificationService } from '../services/notification.service'
 import { Avatar } from '../components/ui/Avatar'
+import { Button } from '../components/ui/Button'
 import { Link } from 'react-router-dom'
+import api from '../services/api'
 import toast from 'react-hot-toast'
 
 export function NotificationsPage() {
@@ -31,12 +33,23 @@ export function NotificationsPage() {
     },
   })
 
+  const respondMutation = useMutation({
+    mutationFn: ({ teamId, accept }: { teamId: string, accept: boolean }) => 
+      api.post(`/teams/${teamId}/respond`, { accept }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
+      toast.success(variables.accept ? 'Você aceitou o convite!' : 'Convite recusado.')
+    },
+    onError: () => toast.error('Erro ao responder convite')
+  })
+
   const getIcon = (type: string) => {
     switch (type) {
       case 'POST_LIKE': return <Heart className="w-4 h-4 text-red-500 fill-current" />
       case 'POST_COMMENT': return <MessageCircle className="w-4 h-4 text-blue-500" />
       case 'NEW_FOLLOWER': return <UserPlus className="w-4 h-4 text-green-500" />
       case 'NEW_CHAMPIONSHIP': return <Trophy className="w-4 h-4 text-yellow-500" />
+      case 'TEAM_INVITE': return <UserPlus className="w-4 h-4 text-purple-500" />
       default: return <Bell className="w-4 h-4 text-gray-500" />
     }
   }
@@ -68,30 +81,64 @@ export function NotificationsPage() {
           </div>
         ) : (
           notifications?.map((notif: any) => (
-            <Link
+            <div
               key={notif.id}
-              to={notif.link || '#'}
-              onClick={() => !notif.read && markAsReadMutation.mutate(notif.id)}
-              className={`card flex items-start gap-4 transition-colors hover:bg-gray-50 ${!notif.read ? 'border-l-4 border-l-blue-500' : ''}`}
+              className={`card flex flex-col gap-3 transition-colors hover:bg-gray-50/50 ${!notif.read ? 'border-l-4 border-l-blue-500 bg-blue-50/5 shadow-blue-100/20' : ''}`}
             >
-              <div className="relative">
-                <Avatar src={notif.sender?.avatarUrl} name={notif.sender?.name || 'System'} size="md" />
-                <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm border border-gray-100">
-                  {getIcon(notif.type)}
+              <div className="flex items-start gap-4">
+                <div className="relative">
+                  <Avatar src={notif.sender?.avatarUrl} name={notif.sender?.name || 'System'} size="md" />
+                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm border border-gray-100">
+                    {getIcon(notif.type)}
+                  </div>
                 </div>
+                <div className="flex-1 min-w-0">
+                  <Link 
+                    to={notif.link || '#'} 
+                    onClick={() => !notif.read && markAsReadMutation.mutate(notif.id)}
+                    className={`text-sm block leading-relaxed ${!notif.read ? 'font-semibold text-gray-900' : 'text-gray-600'}`}
+                  >
+                    {notif.message}
+                  </Link>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: ptBR })}
+                  </p>
+                </div>
+                {!notif.read && (
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
+                )}
               </div>
-              <div className="flex-1 min-w-0">
-                <p className={`text-sm ${!notif.read ? 'font-semibold text-gray-900' : 'text-gray-600'}`}>
-                  {notif.message}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: ptBR })}
-                </p>
-              </div>
-              {!notif.read && (
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
+
+              {!notif.read && notif.type === 'TEAM_INVITE' && notif.metadata?.teamId && (
+                <div className="flex gap-2 ml-14 mt-1">
+                  <Button 
+                    size="xs" 
+                    className="rounded-full px-4"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        respondMutation.mutate({ teamId: notif.metadata.teamId, accept: true });
+                        markAsReadMutation.mutate(notif.id);
+                    }}
+                    loading={respondMutation.isPending}
+                  >
+                    Aceitar
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="xs" 
+                    className="rounded-full px-4 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        respondMutation.mutate({ teamId: notif.metadata.teamId, accept: false });
+                        markAsReadMutation.mutate(notif.id);
+                    }}
+                    loading={respondMutation.isPending}
+                  >
+                    Recusar
+                  </Button>
+                </div>
               )}
-            </Link>
+            </div>
           ))
         )}
       </div>

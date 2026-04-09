@@ -143,3 +143,23 @@ export async function searchUsers(req: Request, res: Response) {
 
   return res.json(users)
 }
+
+export async function getSuggestions(req: Request, res: Response) {
+  const userId = req.userId
+
+  const suggestions = await prisma.user.findMany({
+    where: {
+      id: { not: userId },
+      followers: {
+        none: { followerId: userId }
+      }
+    },
+    select: {
+      id: true, name: true, username: true,
+      avatarUrl: true, userType: true, isVerified: true,
+    },
+    take: 5,
+  })
+
+  return res.json(suggestions)
+}

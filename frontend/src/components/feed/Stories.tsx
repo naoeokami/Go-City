@@ -58,7 +58,7 @@ export function Stories() {
       {/* Botão de adicionar */}
       <div className="flex flex-col items-center gap-1 flex-shrink-0">
         <label className="relative cursor-pointer group">
-          <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
+          <input type="file" className="hidden" accept="image/*,video/*" onChange={handleFileUpload} />
           <div className="w-16 h-16 rounded-full border-2 border-gray-200 p-1 flex items-center justify-center bg-white group-hover:border-blue-500 transition-colors">
             <Avatar src={user?.avatarUrl} name={user?.name || ''} size="lg" className="border-2 border-white" />
           </div>
@@ -114,13 +114,26 @@ export function Stories() {
               </button>
             </div>
 
-            {/* Imagem */}
-            <img 
-              src={selectedUserStories.stories[currentStoryIndex].imageUrl} 
-              alt="Story"
-              className="w-full h-full object-contain"
-              onClick={nextStory}
-            />
+            {/* Conteúdo do Story (Imagem ou Vídeo) */}
+            {selectedUserStories.stories[currentStoryIndex].imageUrl.endsWith('.mp4') || 
+             selectedUserStories.stories[currentStoryIndex].imageUrl.endsWith('.mov') || 
+             selectedUserStories.stories[currentStoryIndex].imageUrl.includes('/video/') ? (
+              <video
+                src={selectedUserStories.stories[currentStoryIndex].imageUrl}
+                className="w-full h-full object-contain"
+                autoPlay
+                playsInline
+                onEnded={nextStory}
+                onClick={nextStory}
+              />
+            ) : (
+              <img 
+                src={selectedUserStories.stories[currentStoryIndex].imageUrl} 
+                alt="Story"
+                className="w-full h-full object-contain"
+                onClick={nextStory}
+              />
+            )}
 
             {/* Navegação Manual */}
             <div className="absolute inset-y-0 left-0 w-1/4" onClick={() => setCurrentStoryIndex(prev => Math.max(0, prev - 1))} />

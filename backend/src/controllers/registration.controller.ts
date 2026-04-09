@@ -6,12 +6,12 @@ import { AppError }          from '../middlewares/error.middleware'
 const prisma = new PrismaClient()
 
 export async function createRegistration(req: Request, res: Response) {
-  const { championshipId, teamName, participants } = req.body
+  const { championshipId, teamId, teamName, participants } = req.body
 
   if (!championshipId) throw new AppError('Campeonato obrigatório')
 
   const championship = await prisma.championship.findUnique({
-    where: { id: championshipId },
+    where: { id: String(championshipId) },
   })
 
   if (!championship) throw new AppError('Campeonato não encontrado', 404)
@@ -20,20 +20,31 @@ export async function createRegistration(req: Request, res: Response) {
     throw new AppError('Inscrições encerradas para este campeonato')
   }
 
-  const existing = await prisma.registration.findUnique({
-    where: {
-      userId_championshipId: {
-        userId:        req.userId,
-        championshipId,
+  // Se estiver se inscrevendo como indivíduo (sem time)
+  if (!teamId) {
+    const existing = await prisma.registration.findUnique({
+      where: {
+        userId_championshipId: {
+          userId:        req.userId,
+          championshipId: String(championshipId),
+        },
       },
-    },
-  })
-
-  if (existing) throw new AppError('Você já está inscrito neste campeonato')
+    })
+    if (existing) throw new AppError('Você já está inscrito neste campeonato')
+  } else {
+    // Se estiver inscrevendo um TIME
+    const existingTeam = await prisma.registration.findFirst({
+      where: {
+        teamId: String(teamId),
+        championshipId: String(championshipId),
+      }
+    })
+    if (existingTeam) throw new AppError('Este time já está inscrito neste campeonato')
+  }
 
   if (championship.maxParticipants) {
     const count = await prisma.registration.count({
-      where: { championshipId },
+      where: { championshipId: String(championshipId) },
     })
 
     if (count >= championship.maxParticipants) {
@@ -44,7 +55,8 @@ export async function createRegistration(req: Request, res: Response) {
   const registration = await prisma.registration.create({
     data: {
       userId:        req.userId,
-      championshipId,
+      championshipId: String(championshipId),
+      teamId:        teamId ? String(teamId) : null,
       teamName,
       participants:  participants || [],
     },

@@ -3,13 +3,14 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Trophy, Home, Bell, User, LogOut, Search, X } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { notificationService } from '../../services/notification.service'
 import { Avatar }       from '../ui/Avatar'
 
 export function Navbar() {
   const { user, logout } = useAuthStore()
   const navigate         = useNavigate()
+  const queryClient      = useQueryClient()
   const [showDropdown, setShowDropdown] = useState(false)
   const [search, setSearch] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -17,7 +18,7 @@ export function Navbar() {
   const { data: notifications } = useQuery({
     queryKey: ['notifications'],
     queryFn: () => notificationService.getNotifications(),
-    refetchInterval: 30000, // Atualiza a cada 30s
+    refetchInterval: 10000, // Atualiza a cada 10s
     enabled: !!user,
   })
 
@@ -33,6 +34,7 @@ export function Navbar() {
 
   const handleLogout = () => {
     logout()
+    queryClient.clear() // Limpa todo o cache (notificações, posts, mensagens)
     navigate('/login')
   }
 

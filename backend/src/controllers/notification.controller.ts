@@ -46,7 +46,8 @@ export async function createNotification(
   senderId: string | null,
   type: NotificationType,
   message: string,
-  link?: string
+  link?: string,
+  metadata?: any
 ) {
   try {
     // Evitar que o usuário receba notificação de si mesmo
@@ -59,6 +60,7 @@ export async function createNotification(
         type,
         message,
         link,
+        metadata: metadata ? (typeof metadata === 'string' ? JSON.parse(metadata) : metadata) : null,
       },
     })
   } catch (error) {

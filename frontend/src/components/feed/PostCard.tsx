@@ -2,11 +2,12 @@
 import { useState }            from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR }                from 'date-fns/locale'
-import { Heart, MessageCircle, Share2, BadgeCheck, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Heart, MessageCircle, Share2, BadgeCheck, MoreHorizontal, Trash2, Search, Play } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Post }       from '../../types'
 import { Avatar }     from '../ui/Avatar'
 import { ImageModal } from '../ui/ImageModal'
+import { VideoModal } from '../ui/VideoModal'
 import { postService } from '../../services/post.service'
 import { useAuthStore } from '../../store/useAuthStore'
 import { Comments } from './Comments'
@@ -18,7 +19,7 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const [showComments, setShowComments] = useState(false)
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false)
   const [showOptions, setShowOptions] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuthStore()
@@ -46,8 +47,13 @@ export function PostCard({ post }: PostCardProps) {
     locale:    ptBR,
   })
 
+  const isVideo = post.imageUrl?.endsWith('.mp4') || 
+                  post.imageUrl?.endsWith('.mov') || 
+                  post.imageUrl?.includes('/video/') ||
+                  post.imageUrl?.includes('.mp4?')
+
   return (
-    <div className="card mb-4">
+    <div className="card mb-4 overflow-hidden">
       {/* Header do post */}
       <div className="flex items-start gap-3 mb-3">
         <Avatar
@@ -111,26 +117,61 @@ export function PostCard({ post }: PostCardProps) {
         {post.content}
       </p>
 
-      {/* Imagem */}
+      {/* Mídia */}
       {post.imageUrl && (
-        <>
-          <div 
-            className="cursor-pointer overflow-hidden rounded-lg mb-3 bg-gray-50 flex items-center justify-center group"
-            onClick={() => setIsImageModalOpen(true)}
-          >
-            <img
-              src={post.imageUrl}
-              alt="Post"
-              className="w-full h-full max-h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          
+        <div 
+          className="cursor-pointer overflow-hidden rounded-xl mb-3 bg-black flex items-center justify-center group relative max-h-[600px]"
+          onClick={() => setIsMediaModalOpen(true)}
+        >
+          {isVideo ? (
+            <div className="relative w-full h-[450px] flex items-center justify-center bg-gray-900">
+               <video
+                src={post.imageUrl}
+                className="w-full h-full object-cover pointer-events-none"
+                muted
+                loop
+                playsInline
+                onMouseOver={e => e.currentTarget.play()}
+                onMouseOut={e => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="bg-white/20 backdrop-blur-md p-4 rounded-full border border-white/30">
+                  <Play className="w-10 h-10 text-white fill-current" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <img
+                src={post.imageUrl}
+                alt="Post content"
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/30">
+                  <Search className="w-8 h-8 text-white" />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Modais */}
+      {post.imageUrl && (
+        isVideo ? (
+          <VideoModal 
+            isOpen={isMediaModalOpen}
+            onClose={() => setIsMediaModalOpen(false)}
+            videoUrl={post.imageUrl}
+          />
+        ) : (
           <ImageModal 
-            isOpen={isImageModalOpen}
-            onClose={() => setIsImageModalOpen(false)}
+            isOpen={isMediaModalOpen}
+            onClose={() => setIsMediaModalOpen(false)}
             imageUrl={post.imageUrl}
           />
-        </>
+        )
       )}
 
       {/* Ações */}
@@ -145,7 +186,7 @@ export function PostCard({ post }: PostCardProps) {
                       }`}
         >
           <Heart className={`w-5 h-5 ${post.liked ? 'fill-current' : ''}`} />
-          <span>{post._count.likes}</span>
+          <span>{post._count?.likes || 0}</span>
         </button>
 
         <button
@@ -154,12 +195,12 @@ export function PostCard({ post }: PostCardProps) {
                      hover:text-blue-500 transition-colors"
         >
           <MessageCircle className="w-5 h-5" />
-          <span>{post._count.comments}</span>
+          <span>{post._count?.comments || 0}</span>
         </button>
 
         <button
           onClick={() => {
-            navigator.clipboard.writeText(window.location.href)
+            navigator.clipboard.writeText(`${window.location.host}/post/${post.id}`)
             toast.success('Link copiado!')
           }}
           className="flex items-center gap-1.5 text-sm text-gray-500

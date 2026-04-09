@@ -34,7 +34,12 @@ model User {
   registrations     Registration[]
   notifications     Notification[]
   sentNotifications Notification[] @relation("sender")
-
+  
+  teams             TeamMember[]
+  captainOf         Team[]
+  sentMessages      Message[]      @relation("SentMessages")
+  receivedMessages  Message[]      @relation("ReceivedMessages")
+  
   @@map("users")
 }
 
@@ -139,6 +144,7 @@ model Championship {
   organizer     User           @relation("organizer", fields: [organizerId], references: [id])
   registrations Registration[]
   results       Result[]
+  matches       Match[]
 
   @@map("championships")
 }
@@ -163,6 +169,8 @@ model Registration {
 
   user         User         @relation(fields: [userId],         references: [id])
   championship Championship @relation(fields: [championshipId], references: [id])
+  teamId       String?
+  team         Team?        @relation(fields: [teamId],         references: [id])
 
   @@unique([userId, championshipId])
   @@map("registrations")
@@ -200,6 +208,7 @@ model Notification {
   message   String
   read      Boolean          @default(false)
   link      String?
+  metadata  Json?
   createdAt DateTime         @default(now())
 
   user   User  @relation(fields: [userId],  references: [id], onDelete: Cascade)
@@ -216,4 +225,97 @@ enum NotificationType {
   REGISTRATION_APPROVED
   REGISTRATION_REJECTED
   NEW_CHAMPIONSHIP
+  TEAM_INVITE
+  PRIVATE_MESSAGE
+  MATCH_REMINDER
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  logoUrl     String?
+  captainId   String
+  captain     User     @relation(fields: [captainId], references: [id])
+  sport       String
+  members     TeamMember[]
+  registrations Registration[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  match1 Match[] @relation("Team1Matches")
+  match2 Match[] @relation("Team2Matches")
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id       String           @id @default(uuid())
+  teamId   String
+  team     Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User             @relation(fields: [userId], references: [id])
+  role     TeamMemberRole   @default(PLAYER)
+  status   TeamMemberStatus @default(PENDING)
+  joinedAt DateTime         @default(now())
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
+enum TeamMemberStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum TeamMemberRole {
+  CAPTAIN
+  PLAYER
+  COACH
+}
+
+model Match {
+  id             String      @id @default(uuid())
+  championshipId String
+  championship   Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  
+  team1Id        String?
+  team1          Team?       @relation("Team1Matches", fields: [team1Id], references: [id])
+  team2Id        String?
+  team2          Team?       @relation("Team2Matches", fields: [team2Id], references: [id])
+
+  score1         Int         @default(0)
+  score2         Int         @default(0)
+  
+  date           DateTime
+  location       String?
+  phase          String      
+  status         MatchStatus @default(SCHEDULED)
+  winnerId       String?
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@map("matches")
+}
+
+enum MatchStatus {
+  SCHEDULED
+  LIVE
+  FINISHED
+  CANCELLED
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@map("messages")
 }
