@@ -64,7 +64,7 @@ export function MessagesPage() {
   }, [messages])
 
   return (
-    <div className="flex h-[calc(100dvh-180px)] md:h-[calc(100vh-140px)] bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+    <div className="flex-1 flex bg-white md:rounded-2xl border-x md:border border-gray-100 overflow-hidden md:shadow-sm h-full min-h-0">
       
       {/* Sidebar de contatos */}
       <div className={`w-full md:w-80 border-r border-gray-100 flex flex-col ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
