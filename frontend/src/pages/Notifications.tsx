@@ -112,8 +112,8 @@ export function NotificationsPage() {
               {!notif.read && notif.type === 'TEAM_INVITE' && notif.metadata?.teamId && (
                 <div className="flex gap-2 ml-14 mt-1">
                   <Button 
-                    size="xs" 
-                    className="rounded-full px-4"
+                    size="sm" 
+                    className="rounded-full px-4 text-xs h-7"
                     onClick={(e) => {
                         e.stopPropagation();
                         respondMutation.mutate({ teamId: notif.metadata.teamId, accept: true });
@@ -125,8 +125,8 @@ export function NotificationsPage() {
                   </Button>
                   <Button 
                     variant="outline" 
-                    size="xs" 
-                    className="rounded-full px-4 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                    size="sm" 
+                    className="rounded-full px-4 text-xs h-7 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                     onClick={(e) => {
                         e.stopPropagation();
                         respondMutation.mutate({ teamId: notif.metadata.teamId, accept: false });

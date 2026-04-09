@@ -92,7 +92,7 @@ export function ProfilePage() {
                 Mensagem
               </Button>
               <Button
-                variant={profile.isFollowing ? "outline" : "default"}
+                variant={profile.isFollowing ? "outline" : "primary"}
                 size="sm"
                 onClick={() => followMutation.mutate()}
                 loading={followMutation.isPending}

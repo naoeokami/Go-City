@@ -17,7 +17,8 @@ export function MessagesPage() {
   const [content, setContent] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const { data: contacts, isLoading: isLoadingContacts } = useQuery({
+  const { data: contacts, isLoading: isLoadingContacts } = useQuery<any[]>({
+    queryKey: ['chat-conversations'],
     queryFn: () => chatService.listConversations(),
     refetchInterval: 5000
   })
