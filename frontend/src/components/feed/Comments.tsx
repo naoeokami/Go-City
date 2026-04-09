@@ -55,7 +55,7 @@ export function Comments({ postId }: CommentsProps) {
           <button
             onClick={() => addCommentMutation.mutate()}
             disabled={!content.trim() || addCommentMutation.isPending}
-            className="text-blue-600 disabled:opacity-50"
+            className="text-blue-600 disabled:opacity-50 flex-shrink-0 ml-1"
           >
             <Send className="w-5 h-5" />
           </button>

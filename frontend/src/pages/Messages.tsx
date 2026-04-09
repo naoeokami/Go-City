@@ -163,7 +163,7 @@ export function MessagesPage() {
                 <button 
                   type="submit" 
                   disabled={!content.trim() || sendMutation.isPending}
-                  className="bg-blue-600 text-white p-2 ml-2 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="bg-blue-600 text-white p-2 ml-2 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0"
                 >
                   <Send className="w-5 h-5" />
                 </button>
