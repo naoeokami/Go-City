@@ -1,7 +1,7 @@
 // src/pages/Feed.tsx
 import { useState }       from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Send, Image as ImageIcon, X }    from 'lucide-react'
+import { Send, Image as ImageIcon, Video, X }    from 'lucide-react'
 import toast              from 'react-hot-toast'
 import { PostCard }       from '../components/feed/PostCard'
 import { Avatar }         from '../components/ui/Avatar'
@@ -44,7 +44,7 @@ export function FeedPage() {
     'Natação', 'Atletismo', 'Futsal', 'Handebol',
   ]
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -52,9 +52,9 @@ export function FeedPage() {
       setIsUploading(true)
       const res = await uploadService.uploadImage(file)
       setImageUrl(res.url)
-      toast.success('Imagem carregada!')
+      toast.success(file.type.startsWith('video/') ? 'Vídeo carregado!' : 'Imagem carregada!')
     } catch (err) {
-      toast.error('Erro ao subir imagem')
+      toast.error('Erro ao subir arquivo')
     } finally {
       setIsUploading(false)
     }
@@ -103,11 +103,19 @@ export function FeedPage() {
             {/* Preview da Imagem */}
             {imageUrl && (
               <div className="relative mt-3 inline-block">
-                <img
-                  src={imageUrl}
-                  alt="Post preview"
-                  className="max-h-60 rounded-lg border border-gray-100"
-                />
+                  {imageUrl.endsWith('.mp4') || imageUrl.endsWith('.mov') || imageUrl.includes('/video/') ? (
+                    <video
+                      src={imageUrl}
+                      controls
+                      className="max-h-60 rounded-lg border border-gray-100"
+                    />
+                  ) : (
+                    <img
+                      src={imageUrl}
+                      alt="Post preview"
+                      className="max-h-60 rounded-lg border border-gray-100"
+                    />
+                  )}
                 <button
                   onClick={() => setImageUrl('')}
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1
@@ -126,9 +134,18 @@ export function FeedPage() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={handleImageUpload}
+                    onChange={handleFileUpload}
                   />
                   <ImageIcon className="w-5 h-5" />
+                </label>
+                <label className={`cursor-pointer transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : 'text-gray-400 hover:text-purple-500'}`}>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <Video className="w-5 h-5" />
                 </label>
                 <span className="text-xs text-gray-400">
                   {content.length}/500

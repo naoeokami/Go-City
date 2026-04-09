@@ -67,6 +67,7 @@ export interface Championship {
   state:                string
   rules?:               string
   prizes?:              string
+  organizerId:          string
   createdAt:            string
   organizer: {
     id:         string
@@ -74,6 +75,7 @@ export interface Championship {
     username:   string
     avatarUrl?: string
   }
+  matches?: Match[]
   results?: Result[]
   _count: {
     registrations: number
@@ -97,6 +99,67 @@ export interface Comment {
   content:   string
   createdAt: string
   author: {
+    id:         string
+    name:       string
+    username:   string
+    avatarUrl?: string
+  }
+}
+
+export interface Team {
+  id:          string
+  name:        string
+  description?: string
+  logoUrl?:     string
+  captainId:   string
+  sport:       string
+  city?:       string
+  state?:      string
+  createdAt:   string
+  members:     TeamMember[]
+  _count?: {
+    members: number
+  }
+}
+
+export interface TeamMember {
+  id:       string
+  teamId:   string
+  userId:   string
+  user: {
+    id:         string
+    name:       string
+    username:   string
+    avatarUrl?: string
+  }
+  role:     'CAPTAIN' | 'PLAYER' | 'COACH'
+  joinedAt: string
+}
+
+export interface Match {
+  id:             string
+  championshipId: string
+  team1Id?:       string
+  team1?:         Team
+  team2Id?:       string
+  team2?:         Team
+  score1:         number
+  score2:         number
+  date:           string
+  location?:      string
+  phase:          string
+  status:         'SCHEDULED' | 'LIVE' | 'FINISHED' | 'CANCELLED'
+  winnerId?:      string
+}
+
+export interface Message {
+  id:         string
+  content:    string
+  senderId:   string
+  receiverId: string
+  read:       boolean
+  createdAt:  string
+  sender?: {
     id:         string
     name:       string
     username:   string

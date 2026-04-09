@@ -2,7 +2,8 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   Home, Trophy,
-  Compass,
+  Compass, Bell,
+  Users, MessageSquare
 } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
 import { Avatar }       from '../ui/Avatar'
@@ -12,9 +13,12 @@ export function Sidebar() {
   const { pathname } = useLocation()
 
   const links = [
-    { to: '/feed',          icon: Home,      label: 'Feed' },
-    { to: '/championships', icon: Trophy,    label: 'Campeonatos' },
-    { to: '/explore',       icon: Compass,   label: 'Explorar' },
+    { to: '/feed',          icon: Home,          label: 'Feed' },
+    { to: '/championships', icon: Trophy,        label: 'Campeonatos' },
+    { to: '/teams',         icon: Users,         label: 'Times' },
+    { to: '/messages',      icon: MessageSquare, label: 'Mensagens' },
+    { to: '/explore',       icon: Compass,       label: 'Explorar' },
+    { to: '/notifications', icon: Bell,          label: 'Notificações' },
   ]
 
   return (
