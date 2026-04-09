@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Users, Plus, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { teamService } from '../services/team.service'
-import { useAuthStore } from '../store/useAuthStore'
 import { Button } from '../components/ui/Button'
 import toast from 'react-hot-toast'
 
