@@ -37,9 +37,9 @@ export function Comments({ postId }: CommentsProps) {
   return (
     <div className="mt-4 pt-4 border-t border-gray-100 space-y-4">
       {/* Form */}
-      <div className="flex gap-2">
-        <Avatar src={user?.avatarUrl} name={user?.name || ''} size="sm" />
-        <div className="flex-1 flex gap-2">
+      <div className="flex gap-3 px-1">
+        <Avatar src={user?.avatarUrl} name={user?.name || ''} size="sm" className="flex-shrink-0" />
+        <div className="flex-1 flex gap-2 min-w-0">
           <input
             type="text"
             value={content}

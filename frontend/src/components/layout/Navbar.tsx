@@ -139,16 +139,22 @@ export function Navbar() {
       </nav>
 
       {/* Bottom Navigation - Mobile Only */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-2 px-6 flex items-center justify-between z-50 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-        <Link to="/feed" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all"><Home className="w-6 h-6" /></Link>
-        <Link to="/explore" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all"><Search className="w-6 h-6" /></Link>
-        <Link to="/teams" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all"><Users className="w-6 h-6" /></Link>
-        <Link to="/messages" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all relative">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-gray-100 py-2 px-6 flex items-center justify-between z-50 pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+        <Link to="/feed" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all outline-none">
+          <Home className="w-6 h-6" />
+        </Link>
+        <Link to="/explore" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all outline-none">
+          <Search className="w-6 h-6" />
+        </Link>
+        <Link to="/teams" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all outline-none">
+          <Users className="w-6 h-6" />
+        </Link>
+        <Link to="/messages" className="p-2 text-gray-400 hover:text-blue-600 active:scale-95 transition-all relative outline-none">
           <MessageSquare className="w-6 h-6" />
           {unreadMsgCount > 0 && <span className="absolute top-1 right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white" />}
         </Link>
-        <Link to={user ? `/profile/${user.username}` : '/login'} className="p-0.5 active:scale-95 transition-all">
-          <Avatar src={user?.avatarUrl} name={user?.name || ''} size="sm" className="w-7 h-7 border border-gray-200" />
+        <Link to={user ? `/profile/${user.username}` : '/login'} className="p-0.5 active:scale-95 transition-all outline-none">
+          <Avatar src={user?.avatarUrl} name={user?.name || ''} size="sm" className="w-8 h-8 border-2 border-transparent active:border-blue-500 transition-all" />
         </Link>
       </div>
     </>
