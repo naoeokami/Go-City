@@ -2,6 +2,7 @@
 import { Request, Response } from 'express'
 import { PrismaClient }      from '@prisma/client'
 import { AppError }          from '../middlewares/error.middleware'
+import { createNotification } from './notification.controller'
 
 const prisma = new PrismaClient()
 
@@ -27,7 +28,19 @@ export async function getProfile(req: Request, res: Response) {
 
   if (!user) throw new AppError('Usuário não encontrado', 404)
 
-  return res.json(user)
+  const isFollowing = await prisma.follow.findUnique({
+    where: {
+      followerId_followingId: {
+        followerId: req.userId,
+        followingId: user.id,
+      },
+    },
+  })
+
+  return res.json({
+    ...user,
+    isFollowing: !!isFollowing,
+  })
 }
 
 export async function getUserPosts(req: Request, res: Response) {
@@ -89,9 +102,22 @@ export async function toggleFollow(req: Request, res: Response) {
     return res.json({ following: false })
   }
 
-  await prisma.follow.create({
+    await prisma.follow.create({
     data: { followerId, followingId: id },
   })
+  
+  const user = await prisma.user.findUnique({
+    where: { id: followerId },
+    select: { name: true, username: true }
+  })
+
+  await createNotification(
+    id,
+    followerId,
+    'NEW_FOLLOWER',
+    `${user?.name} começou a te seguir`,
+    `/profile/${user?.username}`
+  )
 
   return res.json({ following: true })
 }

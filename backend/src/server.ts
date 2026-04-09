@@ -9,6 +9,8 @@ import postRoutes         from './routes/post.routes'
 import championshipRoutes from './routes/championship.routes'
 import registrationRoutes from './routes/registration.routes'
 import uploadRoutes       from './routes/upload.routes'
+import storyRoutes        from './routes/story.routes'
+import notificationRoutes from './routes/notification.routes'
 
 import { errorMiddleware } from './middlewares/error.middleware'
 
@@ -40,6 +42,8 @@ app.use('/api/posts',         postRoutes)
 app.use('/api/championships', championshipRoutes)
 app.use('/api/registrations', registrationRoutes)
 app.use('/api/upload',        uploadRoutes)
+app.use('/api/stories',       storyRoutes)
+app.use('/api/notifications', notificationRoutes)
 
 app.use(errorMiddleware)
 

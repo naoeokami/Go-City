@@ -2,12 +2,14 @@
 import { useState }            from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR }                from 'date-fns/locale'
-import { Heart, MessageCircle, Share2, BadgeCheck } from 'lucide-react'
+import { Heart, MessageCircle, Share2, BadgeCheck, MoreHorizontal, Trash2 } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Post }       from '../../types'
 import { Avatar }     from '../ui/Avatar'
 import { ImageModal } from '../ui/ImageModal'
 import { postService } from '../../services/post.service'
+import { useAuthStore } from '../../store/useAuthStore'
+import { Comments } from './Comments'
 import toast          from 'react-hot-toast'
 
 interface PostCardProps {
@@ -17,7 +19,19 @@ interface PostCardProps {
 export function PostCard({ post }: PostCardProps) {
   const [showComments, setShowComments] = useState(false)
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+  const [showOptions, setShowOptions] = useState(false)
   const queryClient = useQueryClient()
+  const { user } = useAuthStore()
+
+  const deleteMutation = useMutation({
+    mutationFn: () => postService.delete(post.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
+      queryClient.invalidateQueries({ queryKey: ['user-posts'] })
+      toast.success('Postagem excluída')
+    },
+    onError: () => toast.error('Erro ao excluir postagem'),
+  })
 
   const likeMutation = useMutation({
     mutationFn: () => postService.toggleLike(post.id),
@@ -62,6 +76,34 @@ export function PostCard({ post }: PostCardProps) {
             )}
           </div>
         </div>
+
+        {user?.id === post.author.id && (
+          <div className="relative">
+            <button 
+              onClick={() => setShowOptions(!showOptions)}
+              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
+            >
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
+            
+            {showOptions && (
+              <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-100 rounded-lg shadow-lg z-10 py-1">
+                <button
+                  onClick={() => {
+                    if (confirm('Deseja realmente excluir esta postagem?')) {
+                      deleteMutation.mutate()
+                    }
+                    setShowOptions(false)
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Excluir postagem
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Conteúdo */}
@@ -126,6 +168,8 @@ export function PostCard({ post }: PostCardProps) {
           <Share2 className="w-5 h-5" />
         </button>
       </div>
+
+      {showComments && <Comments postId={post.id} />}
     </div>
   )
 }

@@ -7,20 +7,21 @@ import { AppError }          from '../middlewares/error.middleware'
 const prisma = new PrismaClient()
 
 const championshipSchema = z.object({
-  title:                z.string().min(3),
-  description:          z.string().min(10),
+  title:                z.string().min(3, 'Título deve ter pelo menos 3 caracteres'),
+  description:          z.string().min(5, 'Descrição deve ter pelo menos 5 caracteres'),
   sport:                z.string(),
   format:               z.string(),
   maxParticipants:      z.number().optional(),
   registrationFee:      z.number().default(0),
   startDate:            z.string(),
-  endDate:              z.string(),
+  endDate:              z.string().optional(),
   registrationDeadline: z.string(),
   location:             z.string(),
   city:                 z.string(),
   state:                z.string(),
   rules:                z.string().optional(),
   prizes:               z.string().optional(),
+  imageUrl:             z.string().optional(),
 })
 
 export async function createChampionship(req: Request, res: Response) {
@@ -30,7 +31,7 @@ export async function createChampionship(req: Request, res: Response) {
     data: {
       ...data,
       startDate:            new Date(data.startDate),
-      endDate:              new Date(data.endDate),
+      endDate:              data.endDate ? new Date(data.endDate) : new Date(data.startDate),
       registrationDeadline: new Date(data.registrationDeadline),
       organizerId:          req.userId,
       status:               'DRAFT',

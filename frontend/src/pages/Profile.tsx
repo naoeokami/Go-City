@@ -82,13 +82,19 @@ export function ProfilePage() {
 
           {!isOwnProfile && (
             <Button
-              variant="outline"
+              variant={profile.isFollowing ? "outline" : "default"}
               size="sm"
               onClick={() => followMutation.mutate()}
               loading={followMutation.isPending}
             >
-              <UserPlus className="w-4 h-4" />
-              Seguir
+              {profile.isFollowing ? (
+                <>Seguindo</>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4" />
+                  Seguir
+                </>
+              )}
             </Button>
           )}
         </div>

@@ -1,15 +1,35 @@
 // src/components/layout/Navbar.tsx
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Trophy, Home, Bell, User, LogOut, Search } from 'lucide-react'
+import { Trophy, Home, Bell, User, LogOut, Search, X } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
+import { useQuery } from '@tanstack/react-query'
+import { notificationService } from '../../services/notification.service'
 import { Avatar }       from '../ui/Avatar'
 
 export function Navbar() {
   const { user, logout } = useAuthStore()
   const navigate         = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
+  const [search, setSearch] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const { data: notifications } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: () => notificationService.getNotifications(),
+    refetchInterval: 30000, // Atualiza a cada 30s
+    enabled: !!user,
+  })
+
+  const unreadCount = notifications?.filter((n: any) => !n.read).length || 0
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (search.trim()) {
+      navigate(`/explore?q=${encodeURIComponent(search.trim())}`)
+      setSearch('')
+    }
+  }
 
   const handleLogout = () => {
     logout()
@@ -41,15 +61,19 @@ export function Navbar() {
           </Link>
 
           {/* Busca - centro */}
-          <div className="hidden md:flex items-center gap-2 bg-gray-100
-                          rounded-lg px-3 py-2 w-72">
+          <form 
+            onSubmit={handleSearch}
+            className="hidden md:flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 w-72"
+          >
             <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
             <input
               type="text"
               placeholder="Buscar atletas, campeonatos..."
               className="bg-transparent text-sm outline-none w-full"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
-          </div>
+          </form>
 
           {/* Menu direito */}
           <div className="flex items-center gap-3">
@@ -67,9 +91,19 @@ export function Navbar() {
               <Trophy className="w-5 h-5" />
             </Link>
 
-            <button className="text-gray-600 hover:text-blue-600 relative p-1">
+            <Link 
+              to="/notifications"
+              className="text-gray-600 hover:text-blue-600 relative p-1"
+            >
               <Bell className="w-5 h-5" />
-            </button>
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white
+                               text-[10px] font-bold px-1.5 py-0.5 rounded-full
+                               min-w-[18px] text-center border-2 border-white">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </Link>
 
             {/* Avatar com dropdown */}
             {user && (

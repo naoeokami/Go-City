@@ -9,6 +9,7 @@ import { Button }         from '../components/ui/Button'
 import { useAuthStore }   from '../store/useAuthStore'
 import { postService }    from '../services/post.service'
 import { uploadService } from '../services/upload.service'
+import { Stories }       from '../components/feed/Stories'
 
 export function FeedPage() {
   const { user }        = useAuthStore()
@@ -62,6 +63,7 @@ export function FeedPage() {
 
   return (
     <div className="max-w-xl mx-auto">
+      <Stories />
 
       {/* Criar Post */}
       <div className="card mb-6">

@@ -2,7 +2,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   Home, Trophy,
-  Compass,
+  Compass, Bell
 } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
 import { Avatar }       from '../ui/Avatar'
@@ -15,6 +15,7 @@ export function Sidebar() {
     { to: '/feed',          icon: Home,      label: 'Feed' },
     { to: '/championships', icon: Trophy,    label: 'Campeonatos' },
     { to: '/explore',       icon: Compass,   label: 'Explorar' },
+    { to: '/notifications', icon: Bell,      label: 'Notificações' },
   ]
 
   return (

@@ -10,6 +10,9 @@ import { FeedPage }               from './pages/Feed'
 import { ProfilePage }            from './pages/Profile'
 import { ChampionshipsPage }      from './pages/Championships'
 import { ChampionshipDetailPage } from './pages/ChampionshipDetail'
+import { ChampionshipCreatePage } from './pages/ChampionshipCreate'
+import { ExplorePage }            from './pages/Explore'
+import { NotificationsPage }      from './pages/Notifications'
 import { useAuthStore }           from './store/useAuthStore'
 
 const queryClient = new QueryClient({
@@ -50,7 +53,10 @@ export default function App() {
             <Route index element={<Navigate to="/feed" replace />} />
             <Route path="feed"               element={<FeedPage />} />
             <Route path="championships"      element={<ChampionshipsPage />} />
+            <Route path="championships/create" element={<ChampionshipCreatePage />} />
             <Route path="championships/:id"  element={<ChampionshipDetailPage />} />
+            <Route path="explore"            element={<ExplorePage />} />
+            <Route path="notifications"      element={<NotificationsPage />} />
             <Route path="profile/:username"  element={<ProfilePage />} />
           </Route>
 

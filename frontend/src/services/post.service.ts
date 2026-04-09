@@ -27,4 +27,13 @@ export const postService = {
     const response = await api.post(`/posts/${postId}/comments`, { content })
     return response.data
   },
+
+  async getExplore(page = 1): Promise<Post[]> {
+    const response = await api.get<Post[]>(`/posts/explore?page=${page}`)
+    return response.data
+  },
+
+  async delete(postId: string): Promise<void> {
+    await api.delete(`/posts/${postId}`)
+  },
 }

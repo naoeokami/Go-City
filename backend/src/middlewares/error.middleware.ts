@@ -1,5 +1,6 @@
 // src/middlewares/error.middleware.ts
 import { Request, Response, NextFunction } from 'express'
+import { ZodError } from 'zod'
 
 export class AppError {
   public readonly message: string
@@ -20,6 +21,13 @@ export function errorMiddleware(
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       error: err.message,
+    })
+  }
+
+  if (err instanceof ZodError) {
+    return res.status(400).json({
+      error: 'Erro de validação',
+      details: err.flatten().fieldErrors,
     })
   }
 
