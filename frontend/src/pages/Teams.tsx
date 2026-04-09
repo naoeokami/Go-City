@@ -1,16 +1,14 @@
 // src/pages/Teams.tsx
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Users, Plus, Shield, MapPin, Trophy } from 'lucide-react'
+import { Users, Plus, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { teamService } from '../services/team.service'
 import { useAuthStore } from '../store/useAuthStore'
 import { Button } from '../components/ui/Button'
-import { Avatar } from '../components/ui/Avatar'
 import toast from 'react-hot-toast'
 
 export function TeamsPage() {
-  const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [formData, setFormData] = useState({ name: '', sport: 'Futebol', description: '' })

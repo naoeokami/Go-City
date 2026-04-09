@@ -3,7 +3,10 @@ interface AvatarProps {
   src?:  string
   name:  string
   size?: 'sm' | 'md' | 'lg' | 'xl'
+  className?: string
 }
+
+export type { AvatarProps }
 
 const sizes = {
   sm: 'w-8 h-8 text-xs',
@@ -12,7 +15,7 @@ const sizes = {
   xl: 'w-20 h-20 text-xl',
 }
 
-export function Avatar({ src, name, size = 'md' }: AvatarProps) {
+export function Avatar({ src, name, size = 'md', className = '' }: AvatarProps) {
   const initials = name
     .split(' ')
     .map(n => n[0])
@@ -25,7 +28,7 @@ export function Avatar({ src, name, size = 'md' }: AvatarProps) {
       <img
         src={src}
         alt={name}
-        className={`${sizes[size]} rounded-full object-cover flex-shrink-0`}
+        className={`${sizes[size]} rounded-full object-cover flex-shrink-0 ${className}`}
       />
     )
   }
@@ -33,7 +36,7 @@ export function Avatar({ src, name, size = 'md' }: AvatarProps) {
   return (
     <div className={`
       ${sizes[size]} rounded-full bg-blue-600 text-white
-      flex items-center justify-center font-semibold flex-shrink-0
+      flex items-center justify-center font-semibold flex-shrink-0 ${className}
     `}>
       {initials}
     </div>

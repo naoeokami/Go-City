@@ -1,7 +1,7 @@
 // src/components/layout/Suggestions.tsx
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { UserPlus, Check } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import api from '../../services/api'
 import { Avatar } from '../ui/Avatar'
 import { Button } from '../ui/Button'
@@ -40,7 +40,7 @@ export function Suggestions() {
               </div>
             </Link>
             <Button
-              size="xs"
+              size="sm"
               variant="outline"
               className="rounded-full px-3 h-7 text-[11px]"
               onClick={() => followMutation.mutate(user.id)}

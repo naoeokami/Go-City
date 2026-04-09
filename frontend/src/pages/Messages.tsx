@@ -2,10 +2,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { MessageSquare, Send, User, ChevronLeft } from 'lucide-react'
+import { MessageSquare, Send, ChevronLeft } from 'lucide-react'
 import { chatService } from '../services/chat.service'
 import { useAuthStore } from '../store/useAuthStore'
-import { Button } from '../components/ui/Button'
 import { Avatar } from '../components/ui/Avatar'
 import toast from 'react-hot-toast'
 
@@ -17,7 +16,8 @@ export function MessagesPage() {
   const [content, setContent] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const { data: contacts, isLoading: isLoadingContacts } = useQuery({
+  const { data: contacts, isLoading: isLoadingContacts } = useQuery<any[]>({
+    queryKey: ['chat-conversations'],
     queryFn: () => chatService.listConversations(),
     refetchInterval: 5000
   })

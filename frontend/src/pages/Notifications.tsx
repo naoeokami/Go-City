@@ -112,7 +112,7 @@ export function NotificationsPage() {
               {!notif.read && notif.type === 'TEAM_INVITE' && notif.metadata?.teamId && (
                 <div className="flex gap-2 ml-14 mt-1">
                   <Button 
-                    size="xs" 
+                    size="sm" 
                     className="rounded-full px-4"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -125,7 +125,7 @@ export function NotificationsPage() {
                   </Button>
                   <Button 
                     variant="outline" 
-                    size="xs" 
+                    size="sm" 
                     className="rounded-full px-4 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                     onClick={(e) => {
                         e.stopPropagation();

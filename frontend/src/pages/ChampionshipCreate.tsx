@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { Trophy, Calendar, MapPin, Info, DollarSign, Users, ImageIcon, Plus } from 'lucide-react'
+import { Trophy, Calendar, Info, DollarSign, ImageIcon, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Button } from '../components/ui/Button'
 import { championshipService } from '../services/championship.service'
