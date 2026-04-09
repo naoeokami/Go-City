@@ -9,7 +9,7 @@ export function Layout() {
   const isFeed = location.pathname === '/feed'
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-[100dvh] bg-gray-50 flex flex-col">
       <Navbar />
       <div className="max-w-6xl mx-auto px-4 pt-6 pb-32 lg:pb-10">
         <div className="grid grid-cols-12 gap-6">

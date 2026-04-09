@@ -64,7 +64,7 @@ export function MessagesPage() {
   }, [messages])
 
   return (
-    <div className="flex h-[calc(100vh-160px)] md:h-[calc(100vh-140px)] bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+    <div className="flex h-[calc(100dvh-180px)] md:h-[calc(100vh-140px)] bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
       
       {/* Sidebar de contatos */}
       <div className={`w-full md:w-80 border-r border-gray-100 flex flex-col ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
@@ -156,7 +156,7 @@ export function MessagesPage() {
                 <input
                   type="text"
                   placeholder="Escreva sua mensagem..."
-                  className="flex-1 bg-transparent border-none outline-none text-sm p-2.5 px-4"
+                  className="flex-1 min-w-0 bg-transparent border-none outline-none text-sm p-2.5 px-4"
                   value={content}
                   onChange={e => setContent(e.target.value)}
                 />

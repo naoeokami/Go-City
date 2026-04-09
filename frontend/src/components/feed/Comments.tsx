@@ -45,7 +45,7 @@ export function Comments({ postId }: CommentsProps) {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Escreva um comentário..."
-            className="flex-1 bg-gray-100 border-none rounded-full px-4 py-1.5 text-sm outline-none focus:ring-1 focus:ring-blue-500"
+            className="flex-1 min-w-0 bg-gray-100 border-none rounded-full px-4 py-1.5 text-sm outline-none focus:ring-1 focus:ring-blue-500"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && content.trim()) {
                 addCommentMutation.mutate()
