@@ -151,22 +151,35 @@ export function MessagesPage() {
             </div>
 
             {/* Input de mensagem */}
-            <form onSubmit={handleSend} className="p-4 border-t border-gray-100 bg-white shadow-lg z-10">
-              <div className="flex gap-2 bg-gray-100 rounded-2xl p-1 pr-1.5 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-                <input
-                  type="text"
-                  placeholder="Escreva sua mensagem..."
-                  className="flex-1 min-w-0 bg-transparent border-none outline-none text-sm p-2.5 px-4"
-                  value={content}
-                  onChange={e => setContent(e.target.value)}
-                />
-                <button 
-                  type="submit" 
-                  disabled={!content.trim() || sendMutation.isPending}
-                  className="bg-blue-600 text-white p-2 ml-2 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0"
-                >
-                  <Send className="w-5 h-5" />
-                </button>
+            <form onSubmit={handleSend} className="p-3 border-t border-gray-100 bg-white sticky bottom-0">
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-gray-100 rounded-2xl flex items-center pr-2">
+                  <input
+                    type="text"
+                    placeholder="Escreva sua mensagem..."
+                    className="flex-1 bg-transparent border-none outline-none text-sm p-3 px-4 min-w-0"
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                  />
+                  {content.trim() && (
+                    <button 
+                       type="submit"
+                       disabled={sendMutation.isPending}
+                       className="text-blue-600 p-1.5 hover:bg-blue-50 rounded-full transition-colors flex-shrink-0"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+                {!content.trim() && (
+                   <button 
+                    type="button"
+                    className="bg-gray-100 text-gray-400 p-3 rounded-2xl flex-shrink-0"
+                    disabled
+                  >
+                    <Send className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             </form>
           </>
