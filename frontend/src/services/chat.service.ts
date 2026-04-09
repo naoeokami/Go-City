@@ -1,6 +1,6 @@
 // src/services/chat.service.ts
 import api from './api'
-import type { Message } from '../types'
+import type { Message, User } from '../types'
 
 export const chatService = {
   async listConversations(): Promise<any[]> {

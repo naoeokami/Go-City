@@ -1,25 +1,25 @@
-import api from './api';
-import { User } from '../types';
+// src/services/user.service.ts
+import api from './api'
+import type { User, Post } from '../types'
 
 export const userService = {
   async getProfile(username: string): Promise<User> {
-    const response = await api.get(`/users/profile/${username}`);
-    return response.data;
+    const response = await api.get<User>(`/users/${username}`)
+    return response.data
   },
+
+  async getUserPosts(username: string): Promise<Post[]> {
+    const response = await api.get<Post[]>(`/users/${username}/posts`)
+    return response.data
+  },
+
+  async toggleFollow(userId: string): Promise<{ following: boolean }> {
+    const response = await api.post(`/users/${userId}/follow`)
+    return response.data
+  },
+
   async search(query: string): Promise<User[]> {
-    const response = await api.get(`/users/search?q=${query}`);
-    return response.data;
-  },
-  async updateProfile(data: Partial<User>): Promise<User> {
-    const response = await api.put('/users/profile', data);
-    return response.data;
-  },
-  async toggleFollow(targetId: string): Promise<{ following: boolean }> {
-    const response = await api.post(`/users/follow/${targetId}`);
-    return response.data;
-  },
-  async getSuggestions(): Promise<User[]> {
-    const response = await api.get('/users/suggestions');
-    return response.data;
+    const response = await api.get<User[]>(`/users/search?q=${query}`)
+    return response.data
   }
-};
+}

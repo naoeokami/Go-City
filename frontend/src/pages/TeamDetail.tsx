@@ -7,6 +7,7 @@ import { teamService } from '../services/team.service'
 import { userService } from '../services/user.service'
 import { useAuthStore } from '../store/useAuthStore'
 import { Avatar } from '../components/ui/Avatar'
+import { Button } from '../components/ui/Button'
 import toast from 'react-hot-toast'
 
 export function TeamDetailPage() {
