@@ -10,7 +10,6 @@ interface MatchHighlightCardProps {
 
 export function MatchHighlightCard({ activity }: MatchHighlightCardProps) {
   const { match } = activity
-  const isFinished = match?.status === 'FINISHED'
   const p1 = match.team1 || match.player1
   const p2 = match.team2 || match.player2
   const name1 = p1?.name || '---'
