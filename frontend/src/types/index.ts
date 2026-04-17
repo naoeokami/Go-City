@@ -85,6 +85,14 @@ export interface Championship {
   }
   matches?: Match[]
   results?: Result[]
+  registrations?: {
+    id: string
+    teamId?: string
+    userId?: string
+    createdAt: string
+    team?: Team
+    user?: User
+  }[]
   _count: {
     registrations: number
   }
@@ -151,6 +159,10 @@ export interface Match {
   team1?:         Team
   team2Id?:       string
   team2?:         Team
+  player1Id?:     string
+  player1?:       User
+  player2Id?:     string
+  player2?:       User
   score1:         number
   score2:         number
   date:           string

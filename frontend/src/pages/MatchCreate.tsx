@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { Sword, Calendar, MapPin, Trophy, Users, User, Sparkles } from 'lucide-react'
+import { Sword, Calendar, MapPin, Users, User, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { matchService } from '../services/match.service'
 import { Button } from '../components/ui/Button'

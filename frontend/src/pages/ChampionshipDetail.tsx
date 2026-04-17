@@ -47,6 +47,12 @@ export function ChampionshipDetailPage() {
       toast.error(err.response?.data?.error || 'Erro ao se inscrever'),
   })
 
+  const updateMatchScore = (matchId: string, data: any) => {
+    matchService.updateScore(matchId, data).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['championship', id] })
+    })
+  }
+
   const isOrganizer = user?.id === championship?.organizerId
 
   if (isLoading) {
@@ -195,7 +201,7 @@ export function ChampionshipDetailPage() {
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {c.matches.map(match => (
+                  {(c?.matches || []).map(match => (
                     <div key={match.id} className="card !p-0 overflow-hidden group hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all border-none shadow-sm bg-white">
                       <div className="p-3 bg-gray-50/80 flex items-center justify-between border-b border-gray-100">
                         <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest flex items-center gap-1.5">
@@ -208,7 +214,7 @@ export function ChampionshipDetailPage() {
                       </div>
                       <div className="p-8 grid grid-cols-11 items-center gap-4">
                         <div className="col-span-4 flex flex-col items-center text-center group/team">
-                          <Avatar src={match.team1?.logoUrl} name={match.team1?.name} size="lg" className="mb-3 ring-4 ring-gray-50 group-hover/team:ring-blue-100 transition-all" />
+                          <Avatar src={match.team1?.logoUrl} name={match.team1?.name || 'A DEFINIR'} size="lg" className="mb-3 ring-4 ring-gray-50 group-hover/team:ring-blue-100 transition-all" />
                           <p className="text-[13px] font-black text-gray-900 truncate w-full">{match.team1?.name || 'A DEFINIR'}</p>
                         </div>
                         <div className="col-span-3 flex flex-col items-center">
@@ -228,7 +234,7 @@ export function ChampionshipDetailPage() {
                           )}
                         </div>
                         <div className="col-span-4 flex flex-col items-center text-center group/team">
-                          <Avatar src={match.team2?.logoUrl} name={match.team2?.name} size="lg" className="mb-3 ring-4 ring-gray-50 group-hover/team:ring-blue-100 transition-all" />
+                          <Avatar src={match.team2?.logoUrl} name={match.team2?.name || 'A DEFINIR'} size="lg" className="mb-3 ring-4 ring-gray-50 group-hover/team:ring-blue-100 transition-all" />
                           <p className="text-[13px] font-black text-gray-900 truncate w-full">{match.team2?.name || 'A DEFINIR'}</p>
                         </div>
                       </div>
@@ -416,38 +422,38 @@ export function ChampionshipDetailPage() {
                              <p className="text-xs">Gere o chaveamento primeiro.</p>
                           </div>
                         ) : (
-                          <div className="grid gap-3">
-                             {c.matches.map(match => (
-                               <div key={match.id} className="p-5 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+                          <div className="grid gap-2">
+                           {(c?.matches || []).filter(m => m.status !== 'FINISHED').map(m => (
+                               <div key={m.id} className="p-5 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
                                  <div className="flex items-center justify-between mb-4">
-                                    <span className="text-[9px] font-black bg-orange-100 text-orange-700 px-2 py-0.5 rounded uppercase tracking-tighter">{match.phase}</span>
-                                    {match.status === 'FINISHED' && <span className="text-[9px] font-black text-green-600 uppercase">Encerrada</span>}
+                                    <span className="text-[9px] font-black bg-orange-100 text-orange-700 px-2 py-0.5 rounded uppercase tracking-tighter">{m.phase}</span>
+                                    {m.status === 'FINISHED' && <span className="text-[9px] font-black text-green-600 uppercase">Encerrada</span>}
                                  </div>
                                  <div className="grid grid-cols-11 items-center gap-2">
-                                   <div className="col-span-4 font-black text-[11px] text-gray-800 truncate">{match.team1?.name || '---'}</div>
+                                   <div className="col-span-4 font-black text-[11px] text-gray-800 truncate">{m.team1?.name || '---'}</div>
                                    <div className="col-span-3 flex items-center justify-center gap-2">
                                      <input 
                                        type="number" 
                                        className="w-10 h-10 bg-gray-50 border-2 border-gray-100 rounded-xl text-center font-black text-sm outline-none focus:border-orange-500 transition-colors"
-                                       defaultValue={match.score1}
-                                       onBlur={e => matchService.updateScore(match.id, { score1: parseInt(e.target.value) })}
+                                       defaultValue={m.score1}
+                                       onBlur={e => updateMatchScore(m.id, { score1: parseInt(e.target.value) })}
                                      />
                                      <span className="text-gray-300 font-bold">vs</span>
                                      <input 
                                        type="number" 
                                        className="w-10 h-10 bg-gray-50 border-2 border-gray-100 rounded-xl text-center font-black text-sm outline-none focus:border-orange-500 transition-colors"
-                                       defaultValue={match.score2}
-                                       onBlur={e => matchService.updateScore(match.id, { score2: parseInt(e.target.value) })}
+                                       defaultValue={m.score2}
+                                       onBlur={e => updateMatchScore(m.id, { score2: parseInt(e.target.value) })}
                                      />
                                    </div>
-                                   <div className="col-span-4 font-black text-[11px] text-gray-800 text-right truncate">{match.team2?.name || '---'}</div>
+                                   <div className="col-span-4 font-black text-[11px] text-gray-800 text-right truncate">{m.team2?.name || '---'}</div>
                                  </div>
-                                 {match.status !== 'FINISHED' && (
+                                 {m.status !== 'FINISHED' && (
                                    <div className="mt-4 flex justify-center border-t border-gray-50 pt-3">
                                      <button 
                                        onClick={() => {
                                           if (confirm('Deseja finalizar esta partida e atribuir os pontos?')) {
-                                             matchService.updateScore(match.id, { status: 'FINISHED' })
+                                             matchService.updateScore(m.id, { status: 'FINISHED' })
                                                 .then(() => {
                                                    toast.success('Partida encerrada!')
                                                    queryClient.invalidateQueries({ queryKey: ['championship', id] })
