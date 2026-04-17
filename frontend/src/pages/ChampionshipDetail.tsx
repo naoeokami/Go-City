@@ -278,6 +278,58 @@ export function ChampionshipDetailPage() {
             )}
           </div>
 
+          <div className="card mb-4 bg-orange-50 border-orange-100">
+            <h2 className="font-bold text-orange-800 mb-3 text-sm uppercase tracking-wider">⚙️ Gerenciamento</h2>
+            <div className="flex flex-col gap-2">
+              {c.status === 'OPEN' && (
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+                  onClick={() => {
+                    if (confirm('Deseja gerar o chaveamento automático do torneio? isso mudará o status para EM ANDAMENTO.')) {
+                      championshipService.generate(c.id)
+                        .then(() => {
+                          toast.success('Chaveamento gerado com sucesso!')
+                          queryClient.invalidateQueries({ queryKey: ['championship', id] })
+                        })
+                        .catch(err => toast.error(err.response?.data?.error || 'Erro ao gerar chaveamento'))
+                    }
+                  }}
+                >
+                  <Users className="w-4 h-4" />
+                  Gerar Chaveamento (Sorteio)
+                </Button>
+              )}
+              {c.status === 'ONGOING' && (
+                <Button 
+                  className="bg-orange-600 hover:bg-orange-700 text-white w-full"
+                  onClick={() => {
+                    const championId = prompt('ID do Time Campeão:')
+                    const runnerUpId = prompt('ID do Time Vice-Campeão:')
+                    if (championId) {
+                      championshipService.finish(c.id, { championId, runnerUpId })
+                        .then(() => {
+                          toast.success('Campeonato finalizado e pontos atribuídos!')
+                          queryClient.invalidateQueries({ queryKey: ['championship', id] })
+                        })
+                    }
+                  }}
+                >
+                  Finalizar e Atribuir Pontos
+                </Button>
+              )}
+              {c.status === 'DRAFT' && (
+                <Button 
+                  className="w-full"
+                  onClick={() => championshipService.updateStatus(c.id, 'OPEN')
+                    .then(() => queryClient.invalidateQueries({ queryKey: ['championship', id] }))
+                  }
+                >
+                  Abrir Inscrições
+                </Button>
+              )}
+            </div>
+          </div>
+
           {/* Organizador */}
           <div className="card mb-4">
             <h2 className="font-bold text-gray-800 mb-3 text-sm uppercase tracking-wider">Organizado por</h2>
@@ -376,14 +428,59 @@ export function ChampionshipDetailPage() {
 
                   <div className="flex flex-col items-center">
                     <div className="flex items-center gap-4">
-                      <span className="text-2xl font-black text-gray-900">{match.score1}</span>
-                      <span className="text-gray-300 font-light">×</span>
-                      <span className="text-2xl font-black text-gray-900">{match.score2}</span>
+                      {isOrganizer && match.status !== 'FINISHED' ? (
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="number" 
+                            className="w-12 border rounded p-1 text-center font-bold"
+                            defaultValue={match.score1}
+                            onBlur={(e) => {
+                              const score1 = parseInt(e.target.value)
+                              matchService.updateScore(match.id, { score1 })
+                                .then(() => toast.success('Placar atualizado'))
+                            }}
+                          />
+                          <span className="text-gray-300">×</span>
+                          <input 
+                            type="number" 
+                            className="w-12 border rounded p-1 text-center font-bold"
+                            defaultValue={match.score2}
+                            onBlur={(e) => {
+                              const score2 = parseInt(e.target.value)
+                              matchService.updateScore(match.id, { score2 })
+                                .then(() => toast.success('Placar atualizado'))
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <span className="text-2xl font-black text-gray-900">{match.score1}</span>
+                          <span className="text-gray-300 font-light">×</span>
+                          <span className="text-2xl font-black text-gray-900">{match.score2}</span>
+                        </>
+                      )}
                     </div>
+                    {isOrganizer && match.status !== 'FINISHED' && (
+                      <button 
+                        onClick={() => {
+                          if (confirm('Finalizar partida e atribuir pontos?')) {
+                            matchService.updateScore(match.id, { status: 'FINISHED' })
+                              .then(() => {
+                                toast.success('Partida finalizada!')
+                                queryClient.invalidateQueries({ queryKey: ['championship', id] })
+                              })
+                          }
+                        }}
+                        className="text-[10px] text-blue-600 font-bold mt-2 hover:underline"
+                      >
+                        Finalizar Partida
+                      </button>
+                    )}
                     {match.status === 'LIVE' && (
                       <span className="text-[10px] text-red-500 animate-pulse font-bold mt-1">● AO VIVO</span>
                     )}
                   </div>
+
 
                   <div className="flex flex-col items-center gap-2">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">

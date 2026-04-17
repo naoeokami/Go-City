@@ -13,8 +13,14 @@ export const matchService = {
     return response.data
   },
 
-  async updateScore(id: string, score: { score1?: number; score2?: number; status?: string }): Promise<Match> {
-    const response = await api.patch(`/matches/${id}/score`, score)
+  async updateScore(id: string, data: { 
+    score1?: number; 
+    score2?: number; 
+    status?: string;
+    isWalkover?: boolean;
+    winnerId?: string;
+  }): Promise<Match> {
+    const response = await api.patch(`/matches/${id}/score`, data)
     return response.data
   }
 }

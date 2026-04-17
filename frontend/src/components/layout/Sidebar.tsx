@@ -3,7 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   Home, Trophy,
   Compass, Bell,
-  Users, MessageSquare
+  Users, MessageSquare,
+  BarChart2, Sword
 } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
 import { Avatar }       from '../ui/Avatar'
@@ -15,6 +16,8 @@ export function Sidebar() {
   const links = [
     { to: '/feed',          icon: Home,          label: 'Feed' },
     { to: '/championships', icon: Trophy,        label: 'Campeonatos' },
+    { to: '/ranking',       icon: BarChart2,     label: 'Ranking' },
+    { to: '/matches/create', icon: Sword,        label: 'Nova Partida' },
     { to: '/teams',         icon: Users,         label: 'Times' },
     { to: '/messages',      icon: MessageSquare, label: 'Mensagens' },
     { to: '/explore',       icon: Compass,       label: 'Explorar' },

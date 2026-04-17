@@ -8,6 +8,7 @@ import { userService } from '../services/user.service'
 import { useAuthStore } from '../store/useAuthStore'
 import { Avatar } from '../components/ui/Avatar'
 import toast from 'react-hot-toast'
+import { TeamChat } from '../components/team/TeamChat'
 
 export function TeamDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -132,6 +133,13 @@ export function TeamDetailPage() {
               </div>
             ))}
           </div>
+
+          {/* Chat do Time */}
+          {isMember && (
+            <div className="mt-8">
+              <TeamChat teamId={id!} />
+            </div>
+          )}
         </div>
 
         {/* Painel do Capitão - Convidar Membros */}

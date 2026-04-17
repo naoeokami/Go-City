@@ -21,6 +21,7 @@ export interface User {
   state?:     string
   isVerified: boolean
   createdAt:  string
+  score:      number
   _count?: {
     posts:     number
     followers: number
@@ -49,6 +50,9 @@ export interface Post {
   }
 }
 
+export type ChampionshipFormat = 'KNOCKOUT' | 'ROUND_ROBIN' | 'GROUPS_PLUS_KNOCKOUT'
+export type RegistrationType = 'INDIVIDUAL' | 'TEAM'
+
 export interface Championship {
   id:                   string
   title:                string
@@ -56,8 +60,11 @@ export interface Championship {
   sport:                string
   imageUrl?:            string
   status:               ChampionshipStatus
-  format:               string
+  format:               ChampionshipFormat
+  registrationType:     RegistrationType
   maxParticipants?:     number
+  advancePerGroup?:     number
+  groupsCount?:         number
   registrationFee:      number
   startDate:            string
   endDate:              string
@@ -69,6 +76,7 @@ export interface Championship {
   prizes?:              string
   organizerId:          string
   createdAt:            string
+
   organizer: {
     id:         string
     name:       string
@@ -138,7 +146,7 @@ export interface TeamMember {
 
 export interface Match {
   id:             string
-  championshipId: string
+  championshipId?: string
   team1Id?:       string
   team1?:         Team
   team2Id?:       string
@@ -147,9 +155,10 @@ export interface Match {
   score2:         number
   date:           string
   location?:      string
-  phase:          string
+  phase?:         string
   status:         'SCHEDULED' | 'LIVE' | 'FINISHED' | 'CANCELLED'
   winnerId?:      string
+  isWalkover?:    boolean
 }
 
 export interface Message {

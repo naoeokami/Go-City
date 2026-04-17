@@ -22,11 +22,15 @@ export function ChampionshipCreatePage() {
     registrationDeadline: '',
     maxParticipants: 16,
     registrationFee: 0,
-    format: 'Eliminatória Simples',
+    format: 'KNOCKOUT' as any,
+    registrationType: 'INDIVIDUAL' as any,
+    groupsCount: 4,
+    advancePerGroup: 2,
     rules: '',
     prizes: '',
     imageUrl: '',
   })
+
   const [isUploading, setIsUploading] = useState(false)
 
   const mutation = useMutation({
@@ -126,7 +130,7 @@ export function ChampionshipCreatePage() {
                 onChange={e => setFormData(prev => ({ ...prev, sport: e.target.value }))}
               >
                 {['Futebol', 'Basquete', 'Vôlei', 'Tênis', 'Natação', 'Futsal', 'Truco', 'Outro'].map(s => (
-                  <option key={s} value={s}>{s}</option>
+                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
             </div>
@@ -137,15 +141,62 @@ export function ChampionshipCreatePage() {
                 value={formData.format}
                 onChange={e => setFormData(prev => ({ ...prev, format: e.target.value }))}
               >
-                {['Eliminatória Simples', 'Pontos Corridos', 'Grupos + Mata-mata', 'Liga'].map(f => (
-                  <option key={f} value={f}>{f}</option>
-                ))}
+                <option value="KNOCKOUT">Mata-mata</option>
+                <option value="ROUND_ROBIN">Pontos Corridos</option>
+                <option value="GROUPS_PLUS_KNOCKOUT">Grupos + Mata-mata</option>
               </select>
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Tipo de Inscrição</label>
+              <select
+                className="w-full border-gray-200 rounded-lg p-2.5 outline-none font-semibold text-blue-600 bg-blue-50"
+                value={formData.registrationType}
+                onChange={e => setFormData(prev => ({ ...prev, registrationType: e.target.value }))}
+              >
+                <option value="INDIVIDUAL">Apenas Jogadores (Individual)</option>
+                <option value="TEAM">Apenas Equipes (Capitão inscreve)</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Quantidade Participantes</label>
+              <input
+                type="number"
+                className="w-full border-gray-200 rounded-lg p-2.5"
+                value={formData.maxParticipants}
+                onChange={e => setFormData(prev => ({ ...prev, maxParticipants: Number(e.target.value) }))}
+              />
+            </div>
+          </div>
+
+          {formData.format === 'GROUPS_PLUS_KNOCKOUT' && (
+            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 animate-in slide-in-from-top-2">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-500 uppercase">Qtd de Grupos</label>
+                <input
+                  type="number"
+                  className="w-full border-gray-200 rounded-lg p-2"
+                  value={formData.groupsCount}
+                  onChange={e => setFormData(prev => ({ ...prev, groupsCount: Number(e.target.value) }))}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-500 uppercase">Passam por Grupo</label>
+                <input
+                  type="number"
+                  className="w-full border-gray-200 rounded-lg p-2"
+                  value={formData.advancePerGroup}
+                  onChange={e => setFormData(prev => ({ ...prev, advancePerGroup: Number(e.target.value) }))}
+                />
+              </div>
+            </div>
+          )}
+
+
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Descrição</label>
+            <label className="text-sm font-medium text-gray-700">Descrição (Opcional)</label>
             <textarea
               className="w-full border-gray-200 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500/20 h-24"
               placeholder="Fale um pouco sobre o campeonato, premiações, etc."
@@ -237,7 +288,7 @@ export function ChampionshipCreatePage() {
             Inscrição e Imagem
           </h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1">
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">Taxa de Inscrição (R$)</label>
               <input
@@ -247,16 +298,8 @@ export function ChampionshipCreatePage() {
                 onChange={e => setFormData(prev => ({ ...prev, registrationFee: Number(e.target.value) }))}
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Máx. Participantes</label>
-              <input
-                type="number"
-                className="w-full border-gray-200 rounded-lg p-2.5"
-                value={formData.maxParticipants}
-                onChange={e => setFormData(prev => ({ ...prev, maxParticipants: Number(e.target.value) }))}
-              />
-            </div>
           </div>
+
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">

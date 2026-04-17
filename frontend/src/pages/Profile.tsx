@@ -1,7 +1,7 @@
 // src/pages/Profile.tsx
 import { useParams, useNavigate }         from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { MapPin, Calendar, UserPlus, MessageSquare } from 'lucide-react'
+import { MapPin, Calendar, UserPlus, MessageSquare, Trophy } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR }   from 'date-fns/locale'
 import toast      from 'react-hot-toast'
@@ -170,6 +170,13 @@ export function ProfilePage() {
           <div className="text-center">
             <p className="font-bold text-gray-900">{profile._count?.following ?? 0}</p>
             <p className="text-xs text-gray-500">Seguindo</p>
+          </div>
+          <div className="text-center px-4 py-1.5 bg-blue-50 rounded-lg">
+            <p className="font-bold text-blue-700 flex items-center justify-center gap-1">
+              <Trophy className="w-3.5 h-3.5" />
+              {profile.score ?? 0}
+            </p>
+            <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider">Score</p>
           </div>
         </div>
       </div>

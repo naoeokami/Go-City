@@ -21,5 +21,10 @@ export const userService = {
   async search(query: string): Promise<User[]> {
     const response = await api.get<User[]>(`/users/search?q=${query}`)
     return response.data
+  },
+
+  async getRanking(): Promise<User[]> {
+    const response = await api.get<User[]>('/users/ranking')
+    return response.data
   }
 }

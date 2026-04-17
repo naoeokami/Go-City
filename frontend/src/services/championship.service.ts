@@ -32,4 +32,14 @@ export const championshipService = {
     const response = await api.post(`/championships/${championshipId}/results`, data)
     return response.data
   },
+
+  async finish(championshipId: string, results: any): Promise<any> {
+    const response = await api.post(`/championships/${championshipId}/finish`, results)
+    return response.data
+  },
+
+  async generate(championshipId: string): Promise<any> {
+    const response = await api.post(`/championships/${championshipId}/generate`)
+    return response.data
+  }
 }
