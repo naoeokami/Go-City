@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Send, Image as ImageIcon, Video, X }    from 'lucide-react'
 import toast              from 'react-hot-toast'
 import { PostCard }       from '../components/feed/PostCard'
+import { MatchHighlightCard } from '../components/feed/MatchHighlightCard'
 import { Avatar }         from '../components/ui/Avatar'
 import { Button }         from '../components/ui/Button'
 import { useAuthStore }   from '../store/useAuthStore'
@@ -197,8 +198,10 @@ export function FeedPage() {
           </p>
         </div>
       ) : (
-        posts?.map(post => (
-          <PostCard key={post.id} post={post} />
+        posts?.map((item: any) => (
+          item.feedType === 'MATCH_HIGHLIGHT' 
+            ? <MatchHighlightCard key={item.id} activity={item} />
+            : <PostCard key={item.id} post={item} />
         ))
       )}
     </div>

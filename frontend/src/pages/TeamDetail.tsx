@@ -54,6 +54,7 @@ export function TeamDetailPage() {
   if (!team) return <div className="p-8 text-center">Time não encontrado.</div>
 
   const isCaptain = team.captainId === currentUser?.id
+  const isMember = team.members?.some((m: any) => m.userId === currentUser?.id && m.status === 'ACCEPTED')
 
   return (
     <div className="max-w-4xl mx-auto pb-12">

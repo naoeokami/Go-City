@@ -1,26 +1,15 @@
 // src/components/championship/ChampionshipCard.tsx
 import { Link }    from 'react-router-dom'
-import { Calendar, MapPin, Users, Trophy } from 'lucide-react'
+import { Calendar, MapPin, Users, Trophy, ChevronRight } from 'lucide-react'
 import { format }  from 'date-fns'
 import { ptBR }    from 'date-fns/locale'
 import type { Championship } from '../../types'
 
-const statusColors = {
-  DRAFT:     'bg-gray-100 text-gray-600',
-  OPEN:      'bg-green-100 text-green-700',
-  CLOSED:    'bg-red-100 text-red-700',
-  ONGOING:   'bg-blue-100 text-blue-700',
-  FINISHED:  'bg-purple-100 text-purple-700',
-  CANCELLED: 'bg-gray-100 text-gray-400',
-}
-
-const statusLabels = {
-  DRAFT:     'Rascunho',
-  OPEN:      '🟢 Inscrições abertas',
-  CLOSED:    '🔴 Encerrado',
-  ONGOING:   '🔵 Em andamento',
-  FINISHED:  '🏁 Finalizado',
-  CANCELLED: 'Cancelado',
+const statusThemes: any = {
+  DRAFT:     { bg: 'bg-gray-50', text: 'text-gray-500', label: 'Rascunho' },
+  OPEN:      { bg: 'bg-green-50', text: 'text-green-600', label: 'Inscrições Abertas' },
+  ONGOING:   { bg: 'bg-blue-50', text: 'text-blue-600', label: 'Em Andamento' },
+  FINISHED:  { bg: 'bg-purple-50', text: 'text-purple-600', label: 'Finalizado' },
 }
 
 interface Props {
@@ -28,73 +17,76 @@ interface Props {
 }
 
 export function ChampionshipCard({ championship: c }: Props) {
+  const theme = statusThemes[c.status] || statusThemes.DRAFT
+
   return (
-    <Link to={`/championships/${c.id}`}>
-      <div className="card hover:shadow-md transition-all duration-200
-                      hover:-translate-y-0.5 cursor-pointer h-full">
-
-        {/* Banner */}
-        <div className="h-36 bg-gradient-to-br from-blue-500 to-purple-600
-                        rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+    <Link to={`/championships/${c.id}`} className="group block">
+      <div className="card !p-0 overflow-hidden border-none shadow-sm group-hover:shadow-xl group-hover:shadow-blue-100/50 transition-all duration-300 group-hover:-translate-y-1 bg-white">
+        
+        {/* Banner com Overlay */}
+        <div className="relative h-44 overflow-hidden">
           {c.imageUrl ? (
-            <img
-              src={c.imageUrl}
-              alt={c.title}
-              className="w-full h-full object-cover"
-            />
+            <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
           ) : (
-            <Trophy className="w-12 h-12 text-white opacity-40" />
+            <div className="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-900 flex items-center justify-center">
+              <Trophy className="w-12 h-12 text-white/20" />
+            </div>
           )}
-        </div>
-
-        {/* Badges */}
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full
-                            ${statusColors[c.status]}`}>
-            {statusLabels[c.status]}
-          </span>
-          <span className="text-xs bg-gray-100 text-gray-600
-                           px-2 py-0.5 rounded-full">
-            {c.sport}
-          </span>
-        </div>
-
-        {/* Título */}
-        <h3 className="font-bold text-gray-900 mb-1 line-clamp-1">
-          {c.title}
-        </h3>
-
-        <p className="text-gray-500 text-sm mb-3 line-clamp-2">
-          {c.description}
-        </p>
-
-        {/* Infos */}
-        <div className="space-y-1.5 text-xs text-gray-500">
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-blue-400" />
-            {format(new Date(c.startDate), "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/60 to-transparent" />
+          
+          <div className="absolute top-4 left-4">
+             <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md shadow-sm border border-white/20 ${theme.bg} ${theme.text}`}>
+                {theme.label}
+             </span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-blue-400" />
-            {c.city}, {c.state}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-blue-400" />
-            {c._count.registrations}
-            {c.maxParticipants ? ` / ${c.maxParticipants}` : ''} inscritos
+
+          <div className="absolute bottom-4 left-4 right-4">
+             <p className="text-[10px] font-black text-blue-300 uppercase tracking-widest mb-1">{c.sport}</p>
+             <h3 className="text-lg font-black text-white leading-tight line-clamp-1">{c.title}</h3>
           </div>
         </div>
 
-        {/* Preço */}
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <span className={`text-sm font-semibold ${
-            c.registrationFee === 0 ? 'text-green-600' : 'text-gray-700'
-          }`}>
-            {c.registrationFee === 0
-              ? '✅ Gratuito'
-              : `R$ ${c.registrationFee.toFixed(2)}`
-            }
-          </span>
+        {/* Content */}
+        <div className="p-5 space-y-4">
+           {/* Grid Infos */}
+           <div className="grid grid-cols-2 gap-y-3">
+              <div className="flex items-center gap-2">
+                 <div className="p-1.5 bg-gray-50 rounded-lg">
+                    <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                 </div>
+                 <span className="text-xs font-bold text-gray-600">
+                    {format(new Date(c.startDate), "dd MMM", { locale: ptBR })}
+                 </span>
+              </div>
+              <div className="flex items-center gap-2">
+                 <div className="p-1.5 bg-gray-50 rounded-lg">
+                    <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                 </div>
+                 <span className="text-xs font-bold text-gray-600 truncate">
+                    {c.city}
+                 </span>
+              </div>
+              <div className="flex items-center gap-2">
+                 <div className="p-1.5 bg-gray-50 rounded-lg">
+                    <Users className="w-3.5 h-3.5 text-gray-400" />
+                 </div>
+                 <span className="text-xs font-bold text-gray-600">
+                    {c._count.registrations}/{c.maxParticipants || '∞'}
+                 </span>
+              </div>
+              <div className="flex justify-end items-center">
+                 <span className={`text-sm font-black ${c.registrationFee === 0 ? 'text-green-500' : 'text-gray-900'}`}>
+                    {c.registrationFee === 0 ? 'GRÁTIS' : `R$ ${c.registrationFee.toFixed(0)}`}
+                 </span>
+              </div>
+           </div>
+
+           <div className="pt-4 border-t border-gray-50 flex items-center justify-between group-hover/btn:text-blue-600">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ver Detalhes</span>
+              <div className="p-1 bg-gray-50 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                 <ChevronRight className="w-4 h-4" />
+              </div>
+           </div>
         </div>
       </div>
     </Link>

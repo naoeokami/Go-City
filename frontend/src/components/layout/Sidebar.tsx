@@ -16,8 +16,8 @@ export function Sidebar() {
   const links = [
     { to: '/feed',          icon: Home,          label: 'Feed' },
     { to: '/championships', icon: Trophy,        label: 'Campeonatos' },
+    { to: '/matches/create', icon: Sword,         label: 'Registrar Partida' },
     { to: '/ranking',       icon: BarChart2,     label: 'Ranking' },
-    { to: '/matches/create', icon: Sword,        label: 'Nova Partida' },
     { to: '/teams',         icon: Users,         label: 'Times' },
     { to: '/messages',      icon: MessageSquare, label: 'Mensagens' },
     { to: '/explore',       icon: Compass,       label: 'Explorar' },
