@@ -35,8 +35,8 @@ export function Sidebar() {
           >
             <Avatar src={user.avatarUrl} name={user.name} size="md" />
             <div>
-              <p className="font-semibold text-sm text-gray-900">{user.name}</p>
-              <p className="text-xs text-gray-500">@{user.username}</p>
+              <p className="font-semibold text-sm text-gray-900 dark:text-white">{user.name}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">@{user.username}</p>
             </div>
           </Link>
         </div>
@@ -52,8 +52,8 @@ export function Sidebar() {
               flex items-center gap-3 px-3 py-2.5 rounded-lg
               text-sm font-medium transition-colors
               ${pathname === to
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-700 hover:bg-gray-50'
+                ? 'bg-blue-50 dark:bg-navy-700/50 text-blue-600 dark:text-blue-400'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-navy-700'
               }
             `}
           >

@@ -181,12 +181,73 @@ export function ProfilePage() {
         </div>
       </div>
 
+      {/* Badges & Achievements (Gamification) */}
+      {profile.gamification && (
+        <>
+          <div className="card !p-5 mb-6 mx-4 md:mx-0">
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Conquistas & Badges</h3>
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+              {profile.gamification.badges.map((badge: any) => (
+                <div key={badge.id} className="flex flex-col items-center gap-2 min-w-[80px]">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transform hover:-translate-y-1 transition-transform ${
+                    badge.color === 'yellow' ? 'bg-gradient-to-br from-yellow-300 to-yellow-600 shadow-yellow-500/20' :
+                    badge.color === 'blue' ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-blue-500/20' :
+                    'bg-gradient-to-br from-green-400 to-emerald-600 shadow-green-500/20'
+                  }`}>
+                    {badge.icon === 'Trophy' && <Trophy className="w-6 h-6 text-white" />}
+                    {badge.icon === 'Calendar' && <Calendar className="w-6 h-6 text-white" />}
+                    {badge.icon === 'UserPlus' && <UserPlus className="w-6 h-6 text-white" />}
+                  </div>
+                  <span className="text-[10px] font-black text-gray-900 dark:text-white text-center leading-tight">
+                    {badge.title.split(' ').map((word: string, i: number) => <span key={i}>{word}<br/></span>)}
+                  </span>
+                </div>
+              ))}
+              <div className="flex flex-col items-center gap-2 min-w-[80px] opacity-40 grayscale">
+                <div className="w-14 h-14 bg-gray-200 dark:bg-navy-700 rounded-2xl flex items-center justify-center">
+                    <Trophy className="w-6 h-6 text-gray-400" />
+                </div>
+                <span className="text-[10px] font-black text-gray-500 text-center leading-tight">Campeão<br/>Nacional</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Advanced Stats */}
+          <div className="grid grid-cols-2 gap-4 mb-6 mx-4 md:mx-0">
+            <div className="card !p-5 bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-none shadow-xl shadow-blue-600/20">
+                <p className="text-[10px] font-black text-blue-200 uppercase tracking-widest mb-1">Win Rate</p>
+                <p className="text-3xl font-black mb-2">{profile.gamification.winRate}%</p>
+                <div className="w-full bg-blue-900/50 rounded-full h-1.5 mb-1">
+                  <div className="bg-white h-1.5 rounded-full" style={{ width: `${profile.gamification.winRate}%` }}></div>
+                </div>
+                <p className="text-[9px] text-blue-200">De {profile.gamification.matchesPlayed} partidas registradas</p>
+            </div>
+            <div className="card !p-5 bg-white dark:bg-navy-800 border border-gray-100 dark:border-navy-700">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Desempenho</p>
+                <div className="flex items-end gap-1 h-12 mb-2">
+                  {profile.gamification.recentPerformance.map((result: string, i: number) => (
+                    <div 
+                      key={i}
+                      className={`w-full rounded-t-sm ${
+                        result === 'win' ? 'bg-green-500 h-[100%]' : 
+                        result === 'loss' ? 'bg-red-400 h-[30%]' : 
+                        'bg-gray-300 dark:bg-navy-600 h-[60%]'
+                      }`}
+                    ></div>
+                  ))}
+                </div>
+                <p className="text-[9px] font-bold text-gray-500 dark:text-gray-400">Últimos {profile.gamification.recentPerformance.length} jogos</p>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Posts do usuário */}
-      <div>
-        <h2 className="font-bold text-gray-800 mb-3">Publicações</h2>
+      <div className="mx-4 md:mx-0">
+        <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Publicações Recentes</h2>
         {posts?.length === 0 ? (
-          <div className="card text-center py-8">
-            <p className="text-gray-500 text-sm">
+          <div className="card text-center py-12">
+            <p className="text-gray-500 font-bold">
               {isOwnProfile
                 ? 'Você ainda não publicou nada'
                 : 'Este usuário ainda não publicou nada'

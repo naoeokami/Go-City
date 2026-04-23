@@ -43,25 +43,25 @@ export function RegisterPage() {
   const onSubmit = (data: FormData) => registerUser(data)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-navy-900 dark:to-navy-950
                     flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100
-                      p-8 w-full max-w-md">
+      <div className="bg-white dark:bg-navy-800 rounded-2xl shadow-sm border border-gray-100 dark:border-navy-700
+                      p-6 sm:p-8 w-full max-w-md">
 
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="bg-blue-600 p-2 rounded-xl">
+          <div className="bg-blue-600 dark:bg-blue-500 p-2 rounded-xl shadow-lg shadow-blue-500/20">
             <Trophy className="w-6 h-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gray-900">
-            Sport<span className="text-blue-600">Connect</span>
+          <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+            Go<span className="text-blue-600 dark:text-blue-400">City</span>
           </span>
         </div>
 
-        <h1 className="text-xl font-semibold text-gray-900 text-center mb-1">
+        <h1 className="text-xl font-black text-gray-900 dark:text-white text-center mb-1">
           Crie sua conta
         </h1>
-        <p className="text-gray-500 text-sm text-center mb-6">
+        <p className="text-gray-500 dark:text-gray-400 text-sm text-center mb-6">
           Junte-se à comunidade esportiva!
         </p>
 
@@ -97,7 +97,7 @@ export function RegisterPage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">
               Você é...
             </label>
             <select
@@ -127,11 +127,11 @@ export function RegisterPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           Já tem uma conta?{' '}
           <Link
             to="/login"
-            className="text-blue-600 font-semibold hover:underline"
+            className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
           >
             Entrar
           </Link>

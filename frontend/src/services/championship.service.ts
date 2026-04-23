@@ -41,5 +41,20 @@ export const championshipService = {
   async generate(championshipId: string): Promise<any> {
     const response = await api.post(`/championships/${championshipId}/generate`)
     return response.data
+  },
+
+  async generateGroups(championshipId: string, groupsCount?: number): Promise<any> {
+    const response = await api.post(`/championships/${championshipId}/generate-groups`, { groupsCount })
+    return response.data
+  },
+
+  async generateBrackets(championshipId: string): Promise<any> {
+    const response = await api.post(`/championships/${championshipId}/generate-brackets`)
+    return response.data
+  },
+
+  async getStandings(championshipId: string): Promise<any[]> {
+    const response = await api.get(`/championships/${championshipId}/standings`)
+    return response.data
   }
 }

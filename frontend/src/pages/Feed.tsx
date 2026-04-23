@@ -1,16 +1,17 @@
-// src/pages/Feed.tsx
 import { useState }       from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Send, Image as ImageIcon, Video, X }    from 'lucide-react'
+import { Send, Image as ImageIcon, Video, X, Trophy, ChevronRight }    from 'lucide-react'
 import toast              from 'react-hot-toast'
+import { Link }           from 'react-router-dom'
 import { PostCard }       from '../components/feed/PostCard'
 import { MatchHighlightCard } from '../components/feed/MatchHighlightCard'
 import { Avatar }         from '../components/ui/Avatar'
 import { Button }         from '../components/ui/Button'
 import { useAuthStore }   from '../store/useAuthStore'
 import { postService }    from '../services/post.service'
-import { uploadService } from '../services/upload.service'
-import { Stories }       from '../components/feed/Stories'
+import { uploadService }  from '../services/upload.service'
+import { championshipService } from '../services/championship.service'
+import { Stories }        from '../components/feed/Stories'
 
 export function FeedPage() {
   const { user }        = useAuthStore()
@@ -23,6 +24,15 @@ export function FeedPage() {
   const { data: posts, isLoading } = useQuery({
     queryKey: ['feed'],
     queryFn:  () => postService.getFeed(),
+  })
+
+  // Fetch highlighted championship for the Hero Card
+  const { data: highlightChampionship } = useQuery({
+    queryKey: ['championships', 'highlight'],
+    queryFn: async () => {
+      const res = await championshipService.list()
+      return res.find((c: any) => c.status === 'OPEN') || res[0]
+    }
   })
 
   const createPostMutation = useMutation({
@@ -63,12 +73,38 @@ export function FeedPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto">
+    <div className="max-w-2xl mx-auto space-y-6">
+      
+      {/* Premium Hero Card */}
+      {highlightChampionship && (
+        <Link to={`/championships/${highlightChampionship.id}`} className="block relative overflow-hidden rounded-[2rem] shadow-2xl group transition-all hover:scale-[1.01] hover:shadow-blue-500/20 dark:shadow-none border border-transparent dark:border-navy-700">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 z-0">
+             {highlightChampionship.imageUrl && (
+                <img src={highlightChampionship.imageUrl} className="w-full h-full object-cover mix-blend-overlay opacity-40 group-hover:scale-105 transition-transform duration-700" alt="Highlight" />
+             )}
+          </div>
+          <div className="relative z-10 p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+             <div className="flex-1">
+                <div className="flex items-center gap-2 mb-3">
+                   <span className="bg-red-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full animate-pulse shadow-lg shadow-red-500/30">Destaque</span>
+                   <span className="bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{highlightChampionship.sport}</span>
+                </div>
+                <h2 className="text-3xl font-black text-white leading-tight mb-2 group-hover:text-blue-100 transition-colors">{highlightChampionship.title}</h2>
+                <p className="text-blue-100/80 text-sm font-medium line-clamp-2 max-w-md">{highlightChampionship.description || 'Inscreva-se agora e garanta sua vaga neste evento incrível.'}</p>
+             </div>
+             <div className="hidden md:flex bg-white/10 backdrop-blur-md rounded-2xl p-4 flex-col items-center justify-center min-w-[120px] border border-white/20 group-hover:bg-white/20 transition-all">
+                <Trophy className="w-8 h-8 text-yellow-400 mb-2 drop-shadow-md" />
+                <span className="text-white font-black text-sm text-center leading-none">Ver<br/>Detalhes</span>
+             </div>
+          </div>
+        </Link>
+      )}
+
       <Stories />
 
       {/* Criar Post */}
-      <div className="card mb-6">
-        <div className="flex gap-3">
+      <div className="card !p-5">
+        <div className="flex gap-4">
           <Avatar
             src={user?.avatarUrl}
             name={user?.name || 'U'}

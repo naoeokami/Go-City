@@ -11,7 +11,7 @@ export function Layout() {
   const isMessages = location.pathname === '/messages'
   
   return (
-    <div className="min-h-[100dvh] bg-gray-50 flex flex-col">
+    <div className="min-h-[100dvh] bg-gray-50 dark:bg-navy-900 text-gray-900 dark:text-gray-100 flex flex-col transition-colors">
       <Navbar />
       <div className={`flex-1 flex flex-col max-w-6xl mx-auto w-full pt-4 md:pt-6 pb-28 lg:pb-10 ${isMessages ? 'px-0 md:px-4' : 'px-4'}`}>
         <div className="grid grid-cols-12 gap-6 h-full flex-1">

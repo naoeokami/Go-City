@@ -11,6 +11,7 @@ import { ProfilePage }            from './pages/Profile'
 import { ChampionshipsPage }      from './pages/Championships'
 import { ChampionshipDetailPage } from './pages/ChampionshipDetail'
 import { ChampionshipCreatePage } from './pages/ChampionshipCreate'
+import { ChampionshipAdminPage } from './pages/ChampionshipAdmin'
 import { MatchCreatePage }        from './pages/MatchCreate'
 import { ExplorePage }            from './pages/Explore'
 import { NotificationsPage }      from './pages/Notifications'
@@ -59,8 +60,9 @@ export default function App() {
             <Route path="feed"               element={<FeedPage />} />
             <Route path="championships"      element={<ChampionshipsPage />} />
             <Route path="championships/create" element={<ChampionshipCreatePage />} />
-            <Route path="matches/create"       element={<MatchCreatePage />} />
+            <Route path="championships/:id/admin" element={<ChampionshipAdminPage />} />
             <Route path="championships/:id"  element={<ChampionshipDetailPage />} />
+            <Route path="matches/create"       element={<MatchCreatePage />} />
             <Route path="ranking"            element={<RankingPage />} />
             <Route path="explore"            element={<ExplorePage />} />
             <Route path="notifications"      element={<NotificationsPage />} />
