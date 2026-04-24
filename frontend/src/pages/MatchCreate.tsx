@@ -11,8 +11,12 @@ import { UserSearchSelector } from '../components/ui/UserSearchSelector'
 
 export function MatchCreatePage() {
   const navigate = useNavigate()
+  const searchParams = new URLSearchParams(window.location.search)
+  const queryChampionshipId = searchParams.get('championshipId')
+  const queryIsOfficial = searchParams.get('isOfficial') === 'true'
+
   const [matchType, setMatchType] = useState<'TEAM' | 'INDIVIDUAL'>('TEAM')
-  const isOfficial = false
+  const [isOfficial, setIsOfficial] = useState(queryIsOfficial || false)
   const [sport, setSport] = useState('Futebol')
   const [date, setDate] = useState('')
   const [location, setLocation] = useState('')
@@ -30,6 +34,7 @@ export function MatchCreatePage() {
   const [isFinished, setIsFinished] = useState(false)
   const [isWalkover, setIsWalkover] = useState(false)
   const [winnerId, setWinnerId] = useState('')
+  const [championshipId] = useState(queryChampionshipId || '')
 
   const createMatchMutation = useMutation({
     mutationFn: async () => {
@@ -37,6 +42,7 @@ export function MatchCreatePage() {
         date: new Date(date).toISOString(),
         location,
         isOfficial,
+        championshipId: championshipId || null,
         status: isFinished ? 'FINISHED' : 'SCHEDULED'
       }
 

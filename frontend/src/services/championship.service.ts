@@ -56,5 +56,15 @@ export const championshipService = {
   async getStandings(championshipId: string): Promise<any[]> {
     const response = await api.get(`/championships/${championshipId}/standings`)
     return response.data
+  },
+
+  async updateRegistrationStatus(registrationId: string, status: 'APPROVED' | 'REJECTED'): Promise<any> {
+    const response = await api.patch(`/registrations/${registrationId}/status`, { status })
+    return response.data
+  },
+
+  async deleteRegistration(registrationId: string): Promise<any> {
+    const response = await api.delete(`/registrations/${registrationId}`)
+    return response.data
   }
 }

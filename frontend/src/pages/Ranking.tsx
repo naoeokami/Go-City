@@ -43,8 +43,9 @@ export function RankingPage() {
         <Trophy className="absolute right-[-20px] top-[-20px] w-64 h-64 text-white/10 rotate-12" />
       </div>
 
-      <div className="card divide-y divide-gray-100 overflow-hidden shadow-sm">
-        <div className="flex items-center px-6 py-4 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+      <div className="card divide-y divide-gray-100 shadow-sm overflow-x-auto">
+        <div className="min-w-[400px]">
+          <div className="flex items-center px-6 py-4 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
           <div className="w-12 text-center">Posição</div>
           <div className="flex-1 px-4">Atleta</div>
           <div className="w-24 text-right">Score</div>
@@ -91,6 +92,7 @@ export function RankingPage() {
             Nenhum atleta ranqueado no momento.
           </div>
         )}
+        </div>
       </div>
     </div>
   )

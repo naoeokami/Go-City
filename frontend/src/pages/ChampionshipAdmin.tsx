@@ -44,11 +44,42 @@ export function ChampionshipAdminPage() {
         }
     })
 
-    const updateMatchScore = (matchId: string, score1: number, score2: number, status: 'SCHEDULED' | 'FINISHED' = 'SCHEDULED') => {
-        matchService.updateScore(matchId, { score1, score2, status }).then(() => {
+    const generateBracketsMutation = useMutation({
+        mutationFn: () => championshipService.generateBrackets(id!),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
+            toast.success('Chaves de mata-mata geradas! ⚔️')
+        }
+    })
+
+    const updateRegStatusMutation = useMutation({
+        mutationFn: ({ regId, status }: { regId: string, status: 'APPROVED' | 'REJECTED' }) => 
+            championshipService.updateRegistrationStatus(regId, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
+            toast.success('Status da inscrição atualizado!')
+        }
+    })
+
+    const deleteRegMutation = useMutation({
+        mutationFn: (regId: string) => championshipService.deleteRegistration(regId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
+            toast.success('Inscrição removida')
+        }
+    })
+
+    const updateMatchMutation = useMutation({
+        mutationFn: ({ matchId, score1, score2, status }: { matchId: string, score1: number, score2: number, status?: any }) =>
+            matchService.updateScore(matchId, { score1, score2, status }),
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
             toast.success('Placar atualizado!')
-        })
+        }
+    })
+
+    const updateMatchScore = (matchId: string, score1: number, score2: number, status: 'SCHEDULED' | 'FINISHED' = 'SCHEDULED') => {
+        updateMatchMutation.mutate({ matchId, score1, score2, status })
     }
 
     if (isLoading) return <div className="p-8 text-center">Carregando painel de controle...</div>
@@ -85,9 +116,9 @@ export function ChampionshipAdminPage() {
                 </div>
             </header>
 
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
                 {/* Sidebar Navigation */}
-                <aside className="w-64 bg-white border-r border-gray-100 p-6 flex flex-col gap-2">
+                <aside className="w-full lg:w-64 shrink-0 bg-white border-b lg:border-b-0 lg:border-r border-gray-100 p-4 lg:p-6 flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap z-10">
                     {[
                         { id: 'overview',      label: 'Visão Geral',    icon: LayoutGrid },
                         { id: 'registrations', label: 'Inscrições',     icon: Users },
@@ -99,23 +130,23 @@ export function ChampionshipAdminPage() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as AdminTab)}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
+                            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all shrink-0 ${
                                 activeTab === tab.id 
                                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' 
                                 : 'text-gray-500 hover:bg-gray-50'
                             }`}
                         >
-                            <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'text-white' : 'text-gray-400'}`} />
+                            <tab.icon className={`w-5 h-5 shrink-0 ${activeTab === tab.id ? 'text-white' : 'text-gray-400'}`} />
                             {tab.label}
                         </button>
                     ))}
                 </aside>
 
                 {/* Main View Area */}
-                <main className="flex-1 overflow-y-auto p-8">
+                <main className="flex-1 overflow-y-auto p-4 lg:p-8">
                     {activeTab === 'overview' && (
                         <div className="space-y-8 animate-in fade-in duration-500">
-                            <div className="grid grid-cols-4 gap-6">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
                                 <div className="card !p-6 bg-white border-none shadow-sm flex flex-col items-center text-center">
                                     <Users className="w-8 h-8 text-blue-500 mb-2" />
                                     <p className="text-2xl font-black text-gray-900">{championship.registrations.length}</p>
@@ -142,7 +173,7 @@ export function ChampionshipAdminPage() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
                                 <div className="card !p-8 bg-white border-none shadow-sm">
                                     <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6">Informações Rápidas</h3>
                                     <div className="space-y-4">
@@ -163,7 +194,7 @@ export function ChampionshipAdminPage() {
 
                                 <div className="card !p-8 bg-white border-none shadow-sm">
                                     <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6">Ações de Status</h3>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <Button 
                                             className="bg-green-600 hover:bg-green-700 h-12 text-[10px] font-black uppercase"
                                             onClick={() => championshipService.updateStatus(id!, 'OPEN')}
@@ -217,19 +248,33 @@ export function ChampionshipAdminPage() {
                                         <div className="flex items-center gap-2">
                                             {reg.status === 'PENDING' ? (
                                                 <>
-                                                    <button className="p-3 bg-green-50 text-green-600 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-sm">
+                                                    <button 
+                                                        onClick={() => updateRegStatusMutation.mutate({ regId: reg.id, status: 'APPROVED' })}
+                                                        className="p-3 bg-green-50 text-green-600 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-sm"
+                                                    >
                                                         <Check className="w-5 h-5" />
                                                     </button>
-                                                    <button className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                                    <button 
+                                                        onClick={() => updateRegStatusMutation.mutate({ regId: reg.id, status: 'REJECTED' })}
+                                                        className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                                    >
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </>
                                             ) : (
-                                                <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${
-                                                    reg.status === 'APPROVED' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                }`}>
-                                                    {reg.status}
-                                                </span>
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${
+                                                        reg.status === 'APPROVED' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                                    }`}>
+                                                        {reg.status}
+                                                    </span>
+                                                    <button 
+                                                        onClick={() => deleteRegMutation.mutate(reg.id)}
+                                                        className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -260,7 +305,7 @@ export function ChampionshipAdminPage() {
                                     <p className="text-gray-400 font-black uppercase tracking-widest">Nenhum grupo gerado ainda</p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {standings?.map(group => (
                                         <div key={group.id} className="card !p-0 bg-white border-none shadow-sm overflow-hidden">
                                             <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
@@ -300,11 +345,52 @@ export function ChampionshipAdminPage() {
                         </div>
                     )}
 
+                    {activeTab === 'brackets' && (
+                        <div className="space-y-8 animate-in slide-in-from-right-4">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <h2 className="text-2xl font-black text-gray-900">Mata-Mata</h2>
+                                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Chaveamento eliminatório</p>
+                                </div>
+                                <Button 
+                                    className="bg-blue-600 hover:bg-blue-700 px-8 rounded-2xl font-black uppercase text-xs"
+                                    onClick={() => generateBracketsMutation.mutate()}
+                                    loading={generateBracketsMutation.isPending}
+                                >
+                                    Gerar Chaves Automáticas
+                                </Button>
+                            </div>
+
+                            {championship.matches.filter(m => m.phase !== 'GROUP').length === 0 ? (
+                                <div className="py-20 text-center card bg-white border-dashed">
+                                    <Trophy className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+                                    <p className="text-gray-400 font-black uppercase tracking-widest">Nenhuma chave gerada ainda</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-12">
+                                    {/* Exibir chaves aqui ou um aviso que estão no modo usuário */}
+                                    <div className="p-12 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                                        <p className="text-gray-400 font-bold mb-4">As chaves interativas estão disponíveis na página pública</p>
+                                        <Link to={`/championships/${id}`} className="text-blue-600 font-black uppercase text-xs hover:underline">Ver Chaveamento Completo</Link>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {activeTab === 'results' && (
                         <div className="space-y-8 animate-in slide-in-from-right-4">
-                             <div>
-                                <h2 className="text-2xl font-black text-gray-900">Lançamento de Resultados</h2>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Controle total sobre as partidas do torneio</p>
+                             <div className="flex justify-between items-center">
+                                 <div>
+                                     <h2 className="text-2xl font-black text-gray-900">Lançamento de Resultados</h2>
+                                     <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Controle total sobre as partidas do torneio</p>
+                                 </div>
+                                 <Link 
+                                     to={`/matches/create?championshipId=${id}&isOfficial=true`}
+                                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+                                 >
+                                     <Plus className="w-4 h-4" /> Nova Partida
+                                 </Link>
                             </div>
 
                             <div className="grid gap-4">
@@ -335,13 +421,13 @@ export function ChampionshipAdminPage() {
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-11 items-center gap-4">
-                                            <div className="col-span-4 flex flex-col items-end gap-2">
-                                                <p className="font-black text-sm text-gray-900 text-right">{match.team1?.name || match.player1?.name || '---'}</p>
+                                        <div className="flex flex-col sm:grid sm:grid-cols-11 items-center gap-4">
+                                            <div className="w-full sm:col-span-4 flex flex-col items-center sm:items-end gap-2 text-center sm:text-right">
+                                                <p className="font-black text-sm text-gray-900">{match.team1?.name || match.player1?.name || '---'}</p>
                                                 <p className="text-[10px] font-bold text-gray-400 uppercase">Mandante</p>
                                             </div>
 
-                                            <div className="col-span-3 flex items-center justify-center gap-4">
+                                            <div className="w-full sm:col-span-3 flex items-center justify-center gap-4">
                                                 <input 
                                                     type="number" 
                                                     className="w-14 h-14 bg-gray-50 border-2 border-gray-100 rounded-[1.25rem] text-center font-black text-2xl outline-none focus:border-blue-500 focus:bg-white transition-all shadow-inner"
@@ -357,13 +443,69 @@ export function ChampionshipAdminPage() {
                                                 />
                                             </div>
 
-                                            <div className="col-span-4 flex flex-col items-start gap-2">
+                                            <div className="w-full sm:col-span-4 flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
                                                 <p className="font-black text-sm text-gray-900">{match.team2?.name || match.player2?.name || '---'}</p>
                                                 <p className="text-[10px] font-bold text-gray-400 uppercase">Visitante</p>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'stats' && (
+                        <div className="space-y-8 animate-in slide-in-from-right-4">
+                            <div>
+                                <h2 className="text-2xl font-black text-gray-900">Estatísticas e Liderança</h2>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Desempenho técnico do campeonato</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="card bg-white border-none shadow-sm">
+                                    <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <Trophy className="w-4 h-4 text-yellow-500" /> Melhores Ataques
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {standings?.flatMap(g => g.table)
+                                            .sort((a, b) => b.goalsFor - a.goalsFor)
+                                            .slice(0, 5)
+                                            .map((team, idx) => (
+                                                <div key={team.id} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-[10px] font-black text-gray-300">#{idx + 1}</span>
+                                                        <span className="text-xs font-bold text-gray-900">{team.name}</span>
+                                                    </div>
+                                                    <span className="text-xs font-black text-blue-600">{team.goalsFor} Gols</span>
+                                                </div>
+                                            ))}
+                                        {(!standings || standings.length === 0) && (
+                                            <p className="text-xs text-gray-400 text-center py-8">Aguardando geração de grupos</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="card bg-white border-none shadow-sm">
+                                    <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <ShieldCheck className="w-4 h-4 text-green-500" /> Melhores Defesas
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {standings?.flatMap(g => g.table)
+                                            .sort((a, b) => a.goalsAgainst - b.goalsAgainst)
+                                            .slice(0, 5)
+                                            .map((team, idx) => (
+                                                <div key={team.id} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-[10px] font-black text-gray-300">#{idx + 1}</span>
+                                                        <span className="text-xs font-bold text-gray-900">{team.name}</span>
+                                                    </div>
+                                                    <span className="text-xs font-black text-green-600">{team.goalsAgainst} Gols</span>
+                                                </div>
+                                            ))}
+                                        {(!standings || standings.length === 0) && (
+                                            <p className="text-xs text-gray-400 text-center py-8">Aguardando geração de grupos</p>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}

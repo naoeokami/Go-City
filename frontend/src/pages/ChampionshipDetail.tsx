@@ -92,7 +92,7 @@ export function ChampionshipDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
         <div className="lg:col-span-8 space-y-8 min-w-0">
-          <div className="flex gap-2 p-1.5 bg-gray-100/50 dark:bg-navy-800/50 rounded-2xl w-fit overflow-x-auto no-scrollbar">
+          <div className="flex gap-2 p-1.5 bg-gray-100/50 dark:bg-navy-800/50 rounded-2xl w-full md:w-fit overflow-x-auto no-scrollbar scrollbar-hide">
             {[
               { id: 'info', label: 'Sobre', icon: Info },
               { id: 'matches', label: 'Partidas', icon: Swords },
@@ -102,7 +102,7 @@ export function ChampionshipDetailPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap shrink-0 ${
                   activeTab === tab.id ? 'bg-white dark:bg-navy-800 text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -117,7 +117,7 @@ export function ChampionshipDetailPage() {
                <h3 className="text-xl font-black text-gray-900 dark:text-white mb-4">Sobre o Torneio</h3>
                <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-8">{c.description || 'Sem descrição.'}</p>
                
-               <div className="grid grid-cols-2 gap-4">
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 bg-gray-50 dark:bg-navy-900 rounded-2xl">
                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Local</p>
                      <p className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-500" /> {c.location}</p>
@@ -138,14 +138,14 @@ export function ChampionshipDetailPage() {
                  </div>
                ) : (
                  c.matches?.map(m => (
-                    <div key={m.id} className="card !p-6 bg-white dark:bg-navy-800 border-none shadow-sm flex items-center justify-between">
-                       <div className="flex-1 text-right pr-6 font-black text-sm text-gray-900 dark:text-white">{m.team1?.name || m.player1?.name || '---'}</div>
+                    <div key={m.id} className="card !p-4 sm:!p-6 bg-white dark:bg-navy-800 border-none shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+                       <div className="w-full sm:flex-1 text-center sm:text-right sm:pr-6 font-black text-sm text-gray-900 dark:text-white">{m.team1?.name || m.player1?.name || '---'}</div>
                        <div className="flex items-center gap-4 bg-gray-50 dark:bg-navy-900 px-6 py-2 rounded-2xl border border-gray-100 dark:border-navy-700">
                           <span className="text-xl font-black text-gray-900 dark:text-white">{m.score1}</span>
                           <span className="text-gray-300 font-bold">vs</span>
                           <span className="text-xl font-black text-gray-900 dark:text-white">{m.score2}</span>
                        </div>
-                       <div className="flex-1 text-left pl-6 font-black text-sm text-gray-900 dark:text-white">{m.team2?.name || m.player2?.name || '---'}</div>
+                       <div className="w-full sm:flex-1 text-center sm:text-left sm:pl-6 font-black text-sm text-gray-900 dark:text-white">{m.team2?.name || m.player2?.name || '---'}</div>
                     </div>
                  ))
                )}
@@ -153,7 +153,7 @@ export function ChampionshipDetailPage() {
           )}
 
           {activeTab === 'registrations' && (
-            <div className="grid grid-cols-2 gap-4 animate-in fade-in duration-500">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-500">
                {c.registrations.map(reg => (
                  <div key={reg.id} className="card !p-4 flex items-center gap-3 bg-white dark:bg-navy-800 border-none shadow-sm text-left">
                     <Avatar src={reg.user.avatarUrl} name={reg.user.name} size="sm" />
