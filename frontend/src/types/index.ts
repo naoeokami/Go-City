@@ -92,6 +92,8 @@ export interface Championship {
     createdAt: string
     team?: Team
     user?: User
+    status?: 'PENDING' | 'APPROVED' | 'REJECTED'
+    teamName?: string
   }[]
   _count: {
     registrations: number

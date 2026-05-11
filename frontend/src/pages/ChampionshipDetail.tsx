@@ -3,7 +3,7 @@ import { useParams, Link }  from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Calendar, MapPin, Users, Trophy,
-  ArrowLeft, Clock, Plus, Shield, Info, Swords, ShieldCheck
+  ArrowLeft, Clock, Shield, Info, Swords, ShieldCheck
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR }   from 'date-fns/locale'
@@ -13,7 +13,7 @@ import { Avatar } from '../components/ui/Avatar'
 import { TeamSearchSelector } from '../components/team/TeamSearchSelector'
 import { useAuthStore } from '../store/useAuthStore'
 import { championshipService } from '../services/championship.service'
-import { matchService } from '../services/match.service'
+
 import { socket } from '../services/socket'
 
 export function ChampionshipDetailPage() {
@@ -23,6 +23,7 @@ export function ChampionshipDetailPage() {
   const [activeTab, setActiveTab] = useState<'info' | 'matches' | 'management' | 'registrations'>('info')
   const [regType, setRegType] = useState<'INDIVIDUAL' | 'TEAM'>('INDIVIDUAL')
   const [selectedTeamId, setSelectedTeamId] = useState('')
+  const [isTeamLeader, setIsTeamLeader] = useState(false)
 
   const { data: championship, isLoading } = useQuery({
     queryKey: ['championship', id],
@@ -51,8 +52,19 @@ export function ChampionshipDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['championship', id] })
       toast.success('Inscrição realizada com sucesso! ✅')
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) =>
       toast.error(err.response?.data?.error || 'Erro ao se inscrever'),
+  })
+
+  const requestRegistrationMutation = useMutation({
+    mutationFn: () => championshipService.requestRegistration(id!, selectedTeamId),
+    onSuccess: () => {
+      toast.success('Solicitação enviada ao líder com sucesso! 📩')
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (err: any) =>
+      toast.error(err.response?.data?.error || 'Erro ao enviar solicitação'),
   })
 
   const isOrganizer = user?.id === championship?.organizerId
@@ -101,9 +113,9 @@ export function ChampionshipDetailPage() {
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap shrink-0 ${
-                  activeTab === tab.id ? 'bg-white dark:bg-navy-800 text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                  activeTab === tab.id ? 'bg-white dark:bg-navy-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -154,12 +166,12 @@ export function ChampionshipDetailPage() {
 
           {activeTab === 'registrations' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-500">
-               {c.registrations.map(reg => (
+               {c.registrations?.map(reg => (
                  <div key={reg.id} className="card !p-4 flex items-center gap-3 bg-white dark:bg-navy-800 border-none shadow-sm text-left">
-                    <Avatar src={reg.user.avatarUrl} name={reg.user.name} size="sm" />
+                    <Avatar src={reg.user?.avatarUrl} name={reg.user?.name || 'U'} size="sm" />
                     <div>
-                       <p className="font-black text-sm text-gray-900 dark:text-white leading-none mb-1">{reg.teamName || reg.user.name}</p>
-                       <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">@{reg.user.username}</p>
+                       <p className="font-black text-sm text-gray-900 dark:text-white leading-none mb-1">{reg.teamName || reg.user?.name || '---'}</p>
+                       <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">@{reg.user?.username || '---'}</p>
                     </div>
                  </div>
                ))}
@@ -185,15 +197,28 @@ export function ChampionshipDetailPage() {
 
         <div className="lg:col-span-4 space-y-6 text-left">
           {c.status === 'OPEN' && !isOrganizer && (
-            <div className="bg-white dark:bg-navy-800 !p-8 rounded-[2rem] border-none shadow-2xl shadow-blue-200/20 animate-in bounce-in duration-500">
+            <div className="bg-white dark:bg-navy-800 !p-8 rounded-[2rem] border-none shadow-2xl shadow-blue-200/20 dark:shadow-none animate-in bounce-in duration-500">
               <h3 className="text-xl font-black text-gray-900 dark:text-white mb-6">Inscreva-se</h3>
               <div className="space-y-6">
                 <div className="flex gap-2 p-1 bg-gray-50 dark:bg-navy-900 rounded-2xl">
-                  <button onClick={() => setRegType('INDIVIDUAL')} className={`flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${regType === 'INDIVIDUAL' ? 'bg-white dark:bg-navy-800 text-blue-600 shadow-md' : 'text-gray-400'}`}>Solo</button>
-                  <button onClick={() => setRegType('TEAM')} className={`flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${regType === 'TEAM' ? 'bg-white dark:bg-navy-800 text-blue-600 shadow-md' : 'text-gray-400'}`}>Time</button>
+                  <button onClick={() => setRegType('INDIVIDUAL')} className={`flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${regType === 'INDIVIDUAL' ? 'bg-white dark:bg-navy-800 text-blue-600 dark:text-blue-400 shadow-md' : 'text-gray-400 dark:text-gray-500'}`}>Solo</button>
+                  <button onClick={() => setRegType('TEAM')} className={`flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${regType === 'TEAM' ? 'bg-white dark:bg-navy-800 text-blue-600 dark:text-blue-400 shadow-md' : 'text-gray-400 dark:text-gray-500'}`}>Time</button>
                 </div>
-                {regType === 'TEAM' && <TeamSearchSelector sport={c.sport} onSelect={setSelectedTeamId} label="Sua Equipe" />}
-                <Button className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-base font-black rounded-2xl" onClick={() => registerMutation.mutate()} loading={registerMutation.isPending} disabled={regType === 'TEAM' && !selectedTeamId}>Entrar no Torneio</Button>
+                {regType === 'TEAM' && <TeamSearchSelector myTeams={true} sport={c.sport} onSelect={(teamId, isLeader) => { setSelectedTeamId(teamId); setIsTeamLeader(!!isLeader); }} label="Sua Equipe" />}
+                <Button 
+                  className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-base font-black rounded-2xl" 
+                  onClick={() => {
+                    if (regType === 'TEAM' && !isTeamLeader) {
+                      requestRegistrationMutation.mutate()
+                    } else {
+                      registerMutation.mutate()
+                    }
+                  }} 
+                  loading={registerMutation.isPending || requestRegistrationMutation.isPending} 
+                  disabled={regType === 'TEAM' && !selectedTeamId}
+                >
+                  {regType === 'TEAM' && !isTeamLeader ? 'Solicitar Inscrição ao Líder' : 'Entrar no Torneio'}
+                </Button>
               </div>
             </div>
           )}

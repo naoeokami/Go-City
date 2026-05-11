@@ -71,7 +71,7 @@ export function ExplorePage() {
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Pesquisar atletas, times ou esportes..."
-          className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+          className="w-full bg-white dark:bg-navy-800 border border-gray-200 dark:border-navy-700 rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm dark:text-white"
         />
       </div>
 
@@ -80,7 +80,7 @@ export function ExplorePage() {
           <button
             onClick={() => setActiveTab('posts')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              activeTab === 'posts' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
+              activeTab === 'posts' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-navy-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-navy-700 border border-gray-100 dark:border-navy-700'
             }`}
           >
             <Compass className="w-4 h-4" />
@@ -89,7 +89,7 @@ export function ExplorePage() {
           <button
             onClick={() => setActiveTab('people')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              activeTab === 'people' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
+              activeTab === 'people' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-navy-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-navy-700 border border-gray-100 dark:border-navy-700'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -100,24 +100,24 @@ export function ExplorePage() {
 
       {searchQuery ? (
         <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider px-1">Resultados</h2>
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-1">Resultados</h2>
           {isLoadingSearch ? (
             <div className="animate-pulse space-y-3">
               {[1, 2, 3].map(i => <div key={i} className="card h-16" />)}
             </div>
           ) : searchResults?.length === 0 ? (
-            <div className="card text-center py-10 text-gray-500">Nenhum resultado encontrado.</div>
+            <div className="card text-center py-10 text-gray-500 dark:text-gray-400">Nenhum resultado encontrado.</div>
           ) : (
             searchResults?.map((user: any) => (
-              <Link key={user.id} to={`/profile/${user.username}`} className="card flex items-center justify-between hover:bg-gray-50 transition-colors">
+              <Link key={user.id} to={`/profile/${user.username}`} className="card flex items-center justify-between hover:bg-gray-50 dark:hover:bg-navy-700 transition-colors">
                 <div className="flex items-center gap-3">
                   <Avatar src={user.avatarUrl} name={user.name} size="md" />
                   <div>
-                    <p className="font-semibold text-gray-900">{user.name}</p>
-                    <p className="text-xs text-gray-500">@{user.username}</p>
+                    <p className="font-semibold text-gray-900 dark:text-white">{user.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">@{user.username}</p>
                   </div>
                 </div>
-                <div className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full uppercase">
+                <div className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-full uppercase">
                   {user.userType}
                 </div>
               </Link>
@@ -136,7 +136,7 @@ export function ExplorePage() {
         </div>
       ) : (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider px-1">Atletas que você pode gostar</h2>
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-1">Atletas que você pode gostar</h2>
           {isLoadingSuggestions ? (
             <div className="animate-pulse space-y-3">
               {[1, 2, 3].map(i => <div key={i} className="card h-16" />)}
@@ -147,8 +147,8 @@ export function ExplorePage() {
                 <Link to={`/profile/${user.username}`} className="flex items-center gap-3">
                   <Avatar src={user.avatarUrl} name={user.name} size="md" />
                   <div>
-                    <p className="font-semibold text-gray-900 leading-none mb-1">{user.name}</p>
-                    <p className="text-xs text-gray-500">@{user.username}</p>
+                    <p className="font-semibold text-gray-900 dark:text-white leading-none mb-1">{user.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">@{user.username}</p>
                   </div>
                 </Link>
                 <Button 

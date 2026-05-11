@@ -57,11 +57,11 @@ export function NotificationsPage() {
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Notificações</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notificações</h1>
         {notifications?.some((n: any) => !n.read) && (
           <button 
             onClick={() => markAllAsReadMutation.mutate()}
-            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
           >
             <Check className="w-4 h-4" />
             Marcar todas como lidas
@@ -76,19 +76,19 @@ export function NotificationsPage() {
           ))
         ) : notifications?.length === 0 ? (
           <div className="card text-center py-12">
-            <Bell className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-            <p className="text-gray-500">Nenhuma notificação por enquanto.</p>
+            <Bell className="w-12 h-12 text-gray-200 dark:text-gray-700 mx-auto mb-4" />
+            <p className="text-gray-500 dark:text-gray-400">Nenhuma notificação por enquanto.</p>
           </div>
         ) : (
           notifications?.map((notif: any) => (
             <div
               key={notif.id}
-              className={`card flex flex-col gap-3 transition-colors hover:bg-gray-50/50 ${!notif.read ? 'border-l-4 border-l-blue-500 bg-blue-50/5 shadow-blue-100/20' : ''}`}
+              className={`card flex flex-col gap-3 transition-colors hover:bg-gray-50/50 dark:hover:bg-navy-700/50 ${!notif.read ? 'border-l-4 border-l-blue-500 bg-blue-50/5 dark:bg-blue-500/10 shadow-blue-100/20 dark:shadow-none' : ''}`}
             >
               <div className="flex items-start gap-4">
                 <div className="relative">
                   <Avatar src={notif.sender?.avatarUrl} name={notif.sender?.name || 'System'} size="md" />
-                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm border border-gray-100">
+                  <div className="absolute -bottom-1 -right-1 bg-white dark:bg-navy-800 rounded-full p-1 shadow-sm border border-gray-100 dark:border-navy-700">
                     {getIcon(notif.type)}
                   </div>
                 </div>
@@ -96,7 +96,7 @@ export function NotificationsPage() {
                   <Link 
                     to={notif.link || '#'} 
                     onClick={() => !notif.read && markAsReadMutation.mutate(notif.id)}
-                    className={`text-sm block leading-relaxed ${!notif.read ? 'font-semibold text-gray-900' : 'text-gray-600'}`}
+                    className={`text-sm block leading-relaxed ${!notif.read ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}
                   >
                     {notif.message}
                   </Link>
@@ -126,7 +126,7 @@ export function NotificationsPage() {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="rounded-full px-4 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                    className="rounded-full px-4 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-500/30"
                     onClick={(e) => {
                         e.stopPropagation();
                         respondMutation.mutate({ teamId: notif.metadata.teamId, accept: false });

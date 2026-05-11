@@ -36,8 +36,8 @@ export function TeamsPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-900">
-          <Users className="w-6 h-6 text-blue-600" />
+        <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
+          <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           Seus Times
         </h1>
         <Button onClick={() => setShowCreateModal(true)}>
@@ -51,7 +51,7 @@ export function TeamsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {teams?.length === 0 ? (
-            <p className="col-span-full text-center text-gray-500 py-12 card bg-gray-50 border-dashed">
+            <p className="col-span-full text-center text-gray-500 dark:text-gray-400 py-12 card bg-gray-50 dark:bg-navy-800/50 border-dashed dark:border-navy-700">
               Você ainda não participa de nenhum time.
             </p>
           ) : (
@@ -62,13 +62,13 @@ export function TeamsPage() {
                 className="card hover:shadow-md transition-shadow block"
               >
                 <div className="flex items-center gap-4">
-                  <div className="bg-blue-100 p-3 rounded-xl text-blue-600">
+                  <div className="bg-blue-100 dark:bg-blue-500/10 p-3 rounded-xl text-blue-600 dark:text-blue-400">
                     <Shield className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900">{team.name}</h3>
-                    <p className="text-sm text-gray-500">{team.sport}</p>
-                    <p className="text-xs text-blue-600 font-medium">
+                    <h3 className="font-bold text-gray-900 dark:text-white">{team.name}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{team.sport}</p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
                       {team._count?.members || 0} membro(s)
                     </p>
                   </div>
@@ -82,22 +82,22 @@ export function TeamsPage() {
       {/* Modal Criar Time (Simplificado) */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in zoom-in duration-200">
-            <h2 className="text-xl font-bold mb-4">Novo Time</h2>
+          <div className="bg-white dark:bg-navy-800 rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in zoom-in duration-200">
+            <h2 className="text-xl font-bold mb-4 dark:text-white">Novo Time</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Nome do Time</label>
+                <label className="text-sm font-medium dark:text-gray-300">Nome do Time</label>
                 <input
                   type="text"
-                  className="w-full border-gray-200 rounded-lg p-2.5 mt-1"
+                  className="w-full border-gray-200 dark:border-navy-700 bg-white dark:bg-navy-900 dark:text-white rounded-lg p-2.5 mt-1 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                   value={formData.name}
                   onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Esporte</label>
+                <label className="text-sm font-medium dark:text-gray-300">Esporte</label>
                 <select
-                  className="w-full border-gray-200 rounded-lg p-2.5 mt-1"
+                  className="w-full border-gray-200 dark:border-navy-700 bg-white dark:bg-navy-900 dark:text-white rounded-lg p-2.5 mt-1 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                   value={formData.sport}
                   onChange={e => setFormData(prev => ({ ...prev, sport: e.target.value }))}
                 >

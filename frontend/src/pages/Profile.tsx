@@ -112,30 +112,30 @@ export function ProfilePage() {
 
         <div className="mb-3">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-gray-900">{profile.name}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{profile.name}</h1>
             {profile.isVerified && (
-              <span className="text-blue-500 text-xs bg-blue-50
+              <span className="text-blue-500 dark:text-blue-400 text-xs bg-blue-50 dark:bg-blue-500/10
                                px-2 py-0.5 rounded-full">
                 ✓ Verificado
               </span>
             )}
           </div>
-          <p className="text-gray-500 text-sm">@{profile.username}</p>
-          <span className="text-xs bg-gray-100 text-gray-600
+          <p className="text-gray-500 dark:text-gray-400 text-sm">@{profile.username}</p>
+          <span className="text-xs bg-gray-100 dark:bg-navy-800 text-gray-600 dark:text-gray-300
                            px-2 py-0.5 rounded-full mt-1 inline-block">
             {userTypeLabels[profile.userType as keyof typeof userTypeLabels]}
           </span>
         </div>
 
         {profile.bio && (
-          <p className="text-gray-700 text-sm mb-3">{profile.bio}</p>
+          <p className="text-gray-700 dark:text-gray-300 text-sm mb-3">{profile.bio}</p>
         )}
 
         {/* Esportes */}
         {profile.sport?.length > 0 && (
           <div className="flex gap-1.5 flex-wrap mb-3">
             {profile.sport.map((s: string) => (
-              <span key={s} className="text-xs bg-blue-50 text-blue-700
+              <span key={s} className="text-xs bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400
                                        px-2 py-0.5 rounded-full">
                 {s}
               </span>
@@ -143,7 +143,7 @@ export function ProfilePage() {
           </div>
         )}
 
-        <div className="flex items-center gap-4 text-xs text-gray-500">
+        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
           {profile.city && (
             <span className="flex items-center gap-1">
               <MapPin className="w-3.5 h-3.5" />
@@ -158,25 +158,25 @@ export function ProfilePage() {
         </div>
 
         {/* Contadores */}
-        <div className="flex gap-6 mt-4 pt-4 border-t border-gray-100">
+        <div className="flex gap-6 mt-4 pt-4 border-t border-gray-100 dark:border-navy-700">
           <div className="text-center">
-            <p className="font-bold text-gray-900">{profile._count?.posts ?? 0}</p>
-            <p className="text-xs text-gray-500">Posts</p>
+            <p className="font-bold text-gray-900 dark:text-white">{profile._count?.posts ?? 0}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Posts</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-gray-900">{profile._count?.followers ?? 0}</p>
-            <p className="text-xs text-gray-500">Seguidores</p>
+            <p className="font-bold text-gray-900 dark:text-white">{profile._count?.followers ?? 0}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Seguidores</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-gray-900">{profile._count?.following ?? 0}</p>
-            <p className="text-xs text-gray-500">Seguindo</p>
+            <p className="font-bold text-gray-900 dark:text-white">{profile._count?.following ?? 0}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Seguindo</p>
           </div>
-          <div className="text-center px-4 py-1.5 bg-blue-50 rounded-lg">
-            <p className="font-bold text-blue-700 flex items-center justify-center gap-1">
+          <div className="text-center px-4 py-1.5 bg-blue-50 dark:bg-blue-500/10 rounded-lg">
+            <p className="font-bold text-blue-700 dark:text-blue-400 flex items-center justify-center gap-1">
               <Trophy className="w-3.5 h-3.5" />
               {profile.score ?? 0}
             </p>
-            <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider">Score</p>
+            <p className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Score</p>
           </div>
         </div>
       </div>
@@ -247,7 +247,7 @@ export function ProfilePage() {
         <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Publicações Recentes</h2>
         {posts?.length === 0 ? (
           <div className="card text-center py-12">
-            <p className="text-gray-500 font-bold">
+            <p className="text-gray-500 dark:text-gray-400 font-bold">
               {isOwnProfile
                 ? 'Você ainda não publicou nada'
                 : 'Este usuário ainda não publicou nada'

@@ -42,12 +42,12 @@ export function ChampionshipsPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
            <div className="space-y-2">
              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-xl shadow-blue-200">
+                <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-xl shadow-blue-200 dark:shadow-none">
                    <Trophy className="w-8 h-8" />
                 </div>
-                <h1 className="text-4xl font-black text-gray-900 tracking-tight">Campeonatos</h1>
+                <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight">Campeonatos</h1>
              </div>
-             <p className="text-gray-500 font-medium max-w-lg">
+             <p className="text-gray-500 dark:text-gray-400 font-medium max-w-lg">
                 Seja o protagonista da sua história esportiva. Inscreva seu time ou jogue solo nos melhores torneios da região.
              </p>
            </div>
@@ -66,15 +66,15 @@ export function ChampionshipsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
          {/* Sidebar Filters */}
          <div className="lg:col-span-3 space-y-8">
-            <div className="card !p-6 space-y-6 bg-white border-none shadow-sm">
+            <div className="card !p-6 space-y-6 bg-white dark:bg-navy-800 border-none shadow-sm">
                <div>
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-4">Busca Rápida</label>
+                  <label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-4">Busca Rápida</label>
                   <div className="relative">
-                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
+                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 dark:text-gray-500" />
                      <input 
                         type="text" 
                         placeholder="Nome do torneio..."
-                        className="w-full bg-gray-50 border-none rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold placeholder:text-gray-300 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                        className="w-full bg-gray-50 dark:bg-navy-900 dark:text-white border-none rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold placeholder:text-gray-300 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500/20 transition-all"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                      />
@@ -82,14 +82,14 @@ export function ChampionshipsPage() {
                </div>
 
                <div>
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-4 flex items-center gap-2">
+                  <label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-4 flex items-center gap-2">
                      <Filter className="w-3 h-3" /> Categorias
                   </label>
                   <div className="flex flex-col gap-1">
                      <button
                         onClick={() => setSport('')}
                         className={`text-left px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-tighter transition-all ${
-                           sport === '' ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:bg-gray-50'
+                           sport === '' ? 'bg-blue-50 dark:bg-navy-700 text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-navy-700'
                         }`}
                      >
                         Todas as Categorias
@@ -99,7 +99,7 @@ export function ChampionshipsPage() {
                            key={s}
                            onClick={() => setSport(s)}
                            className={`text-left px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-tighter transition-all ${
-                              sport === s ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:bg-gray-50'
+                              sport === s ? 'bg-blue-50 dark:bg-navy-700 text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-navy-700'
                            }`}
                         >
                            {s}
@@ -113,15 +113,15 @@ export function ChampionshipsPage() {
          {/* Main Listing */}
          <div className="lg:col-span-9 space-y-6">
             {/* Horizontal Tabs for Status */}
-            <div className="flex gap-2 p-1.5 bg-gray-100/50 rounded-2xl w-full md:w-fit overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <div className="flex gap-2 p-1.5 bg-gray-100/50 dark:bg-navy-800/50 rounded-2xl w-full md:w-fit overflow-x-auto whitespace-nowrap scrollbar-hide">
                {STATUS_TABS.map(tab => (
                   <button
                      key={tab.value}
                      onClick={() => setStatus(tab.value)}
                      className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all shrink-0 ${
                         status === tab.value 
-                           ? 'bg-white text-blue-600 shadow-sm' 
-                           : 'text-gray-500 hover:text-gray-700'
+                           ? 'bg-white dark:bg-navy-700 text-blue-600 dark:text-blue-400 shadow-sm' 
+                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                      }`}
                   >
                      {tab.label}
@@ -133,16 +133,16 @@ export function ChampionshipsPage() {
             {isLoading ? (
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[1, 2, 3, 4].map(i => (
-                     <div key={i} className="card !p-0 h-80 animate-pulse bg-gray-100 rounded-3xl" />
+                     <div key={i} className="card !p-0 h-80 animate-pulse bg-gray-100 dark:bg-navy-800 rounded-3xl" />
                   ))}
                </div>
             ) : filteredData?.length === 0 ? (
-               <div className="card !p-20 text-center bg-gray-50/50 border-dashed border-gray-200">
-                  <div className="w-16 h-16 bg-white rounded-3xl shadow-lg flex items-center justify-center mx-auto mb-6">
-                     <Trophy className="w-8 h-8 text-gray-200" />
+               <div className="card !p-20 text-center bg-gray-50/50 dark:bg-navy-800/50 border-dashed border-gray-200 dark:border-navy-700">
+                  <div className="w-16 h-16 bg-white dark:bg-navy-700 rounded-3xl shadow-lg flex items-center justify-center mx-auto mb-6">
+                     <Trophy className="w-8 h-8 text-gray-200 dark:text-gray-600" />
                   </div>
-                  <h3 className="text-xl font-black text-gray-900 mb-2">Puxa, nenhum evento aqui.</h3>
-                  <p className="text-sm text-gray-500 max-w-xs mx-auto mb-8 font-medium">Tente ajustar seus filtros ou buscar por outro esporte!</p>
+                  <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Puxa, nenhum evento aqui.</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mx-auto mb-8 font-medium">Tente ajustar seus filtros ou buscar por outro esporte!</p>
                   <Button variant="outline" onClick={() => { setSport(''); setStatus(''); setSearchTerm(''); }}>Limpar Filtros</Button>
                </div>
             ) : (

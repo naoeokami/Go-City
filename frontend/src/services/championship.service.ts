@@ -28,6 +28,11 @@ export const championshipService = {
     return response.data
   },
 
+  async requestRegistration(championshipId: string, teamId: string): Promise<any> {
+    const response = await api.post(`/championships/${championshipId}/request-registration`, { teamId })
+    return response.data
+  },
+
   async addResult(championshipId: string, data: any): Promise<any> {
     const response = await api.post(`/championships/${championshipId}/results`, data)
     return response.data
@@ -43,8 +48,8 @@ export const championshipService = {
     return response.data
   },
 
-  async generateGroups(championshipId: string, groupsCount?: number): Promise<any> {
-    const response = await api.post(`/championships/${championshipId}/generate-groups`, { groupsCount })
+  async generateGroups(championshipId: string, params: { groupsCount?: number, participantsPerGroup?: number, advancePerGroup?: number }): Promise<any> {
+    const response = await api.post(`/championships/${championshipId}/generate-groups`, params)
     return response.data
   },
 

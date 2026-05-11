@@ -89,11 +89,11 @@ export function UserSearchSelector({
           onFocus={() => setIsOpen(true)}
           placeholder={multiple ? "Adicionar atletas..." : "Buscar atleta..."}
           disabled={disabled}
-          className="w-full bg-gray-50 border-2 border-transparent focus:border-blue-100 focus:bg-white rounded-2xl py-3.5 pl-12 pr-4 text-xs font-bold outline-none transition-all shadow-sm"
+          className="w-full bg-gray-50 dark:bg-navy-900 dark:text-white border-2 border-transparent focus:border-blue-100 dark:focus:border-blue-500/30 focus:bg-white dark:focus:bg-navy-800 rounded-2xl py-3.5 pl-12 pr-4 text-xs font-bold outline-none transition-all shadow-sm"
         />
         
         {isOpen && (users.length > 0 || loading) && (
-          <div className="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div className="absolute z-50 w-full mt-2 bg-white dark:bg-navy-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-navy-700 overflow-hidden animate-in fade-in slide-in-from-top-2">
             {loading ? (
               <div className="p-4 text-center text-xs text-gray-400 font-bold animate-pulse italic">Buscando na rede...</div>
             ) : (
@@ -108,12 +108,12 @@ export function UserSearchSelector({
                       type="button"
                       disabled={isExcluded}
                       onClick={() => handleSelect(u)}
-                      className={`w-full flex items-center justify-between p-3 hover:bg-blue-50 transition-colors border-b border-gray-50 last:border-0 ${isExcluded ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
+                      className={`w-full flex items-center justify-between p-3 hover:bg-blue-50 dark:hover:bg-navy-700 transition-colors border-b border-gray-50 dark:border-navy-700 last:border-0 ${isExcluded ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
                     >
                       <div className="flex items-center gap-3">
                          <Avatar src={u.avatarUrl} name={u.name} size="sm" />
                          <div className="text-left">
-                           <p className="text-xs font-black text-gray-900">{u.name}</p>
+                           <p className="text-xs font-black text-gray-900 dark:text-white">{u.name}</p>
                            <p className="text-[10px] text-gray-400 font-bold">@{u.username}</p>
                          </div>
                       </div>
@@ -135,13 +135,13 @@ export function UserSearchSelector({
       {selectedUsers.length > 0 && (
         <div className="flex flex-wrap gap-2 animate-in fade-in duration-300">
            {selectedUsers.map(u => (
-             <div key={u.id} className="inline-flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-xl border border-blue-50 shadow-sm hover:border-blue-100 transition-all">
+             <div key={u.id} className="inline-flex items-center gap-2 bg-white dark:bg-navy-800 px-2.5 py-1.5 rounded-xl border border-blue-50 dark:border-navy-700 shadow-sm hover:border-blue-100 dark:hover:border-navy-600 transition-all">
                 <Avatar src={u.avatarUrl} name={u.name} size="xs" />
-                <span className="text-[10px] font-black text-gray-800 tracking-tight">{u.name}</span>
+                <span className="text-[10px] font-black text-gray-800 dark:text-white tracking-tight">{u.name}</span>
                 <button 
                   type="button"
                   onClick={() => removeUser(u.id)}
-                  className="ml-1 p-0.5 hover:bg-red-50 text-gray-300 hover:text-red-500 rounded-md transition-colors"
+                  className="ml-1 p-0.5 hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-300 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 rounded-md transition-colors"
                 >
                    <X className="w-3 h-3" />
                 </button>

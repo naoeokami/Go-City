@@ -47,7 +47,7 @@ export function Avatar({ src, name, size = 'md', className = '' }: AvatarProps) 
       <img
         src={src}
         alt={name}
-        className={`${sizes[size]} rounded-full object-cover flex-shrink-0 shadow-sm border border-gray-100 ${className}`}
+        className={`${sizes[size]} rounded-full object-cover flex-shrink-0 shadow-sm border border-gray-100 dark:border-navy-700 ${className}`}
       />
     )
   }

@@ -63,7 +63,7 @@ export function PostCard({ post }: PostCardProps) {
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1 flex-wrap">
-            <span className="font-semibold text-gray-900 text-sm">
+            <span className="font-semibold text-gray-900 dark:text-white text-sm">
               {post.author.name}
             </span>
             {post.author.isVerified && (
@@ -87,13 +87,13 @@ export function PostCard({ post }: PostCardProps) {
           <div className="relative">
             <button 
               onClick={() => setShowOptions(!showOptions)}
-              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-navy-700 rounded-full transition-colors text-gray-400"
             >
               <MoreHorizontal className="w-5 h-5" />
             </button>
             
             {showOptions && (
-              <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-100 rounded-lg shadow-lg z-10 py-1">
+              <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-navy-800 border border-gray-100 dark:border-navy-700 rounded-lg shadow-lg z-10 py-1">
                 <button
                   onClick={() => {
                     if (confirm('Deseja realmente excluir esta postagem?')) {
@@ -101,7 +101,7 @@ export function PostCard({ post }: PostCardProps) {
                     }
                     setShowOptions(false)
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                   Excluir postagem
@@ -113,7 +113,7 @@ export function PostCard({ post }: PostCardProps) {
       </div>
 
       {/* Conteúdo */}
-      <p className="text-gray-800 text-sm leading-relaxed mb-3">
+      <p className="text-gray-800 dark:text-gray-100 text-sm leading-relaxed mb-3">
         {post.content}
       </p>
 
@@ -175,7 +175,7 @@ export function PostCard({ post }: PostCardProps) {
       )}
 
       {/* Ações */}
-      <div className="flex items-center gap-6 pt-3 border-t border-gray-100">
+      <div className="flex items-center gap-6 pt-3 border-t border-gray-100 dark:border-navy-700">
         <button
           onClick={() => likeMutation.mutate()}
           className={`flex items-center gap-1.5 text-sm transition-colors

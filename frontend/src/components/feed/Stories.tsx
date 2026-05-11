@@ -59,14 +59,14 @@ export function Stories() {
       <div className="flex flex-col items-center gap-1 flex-shrink-0">
         <label className="relative cursor-pointer group">
           <input type="file" className="hidden" accept="image/*,video/*" onChange={handleFileUpload} />
-          <div className="w-16 h-16 rounded-full border-2 border-gray-200 p-1 flex items-center justify-center bg-white group-hover:border-blue-500 transition-colors">
-            <Avatar src={user?.avatarUrl} name={user?.name || ''} size="lg" className="border-2 border-white" />
+          <div className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-navy-700 p-1 flex items-center justify-center bg-white dark:bg-navy-800 group-hover:border-blue-500 transition-colors">
+            <Avatar src={user?.avatarUrl} name={user?.name || ''} size="lg" className="border-2 border-white dark:border-navy-800" />
           </div>
-          <div className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-1 border-2 border-white shadow-sm">
+          <div className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-1 border-2 border-white dark:border-navy-800 shadow-sm">
             <Plus className="w-3 h-3" />
           </div>
         </label>
-        <span className="text-[10px] text-gray-500 font-medium">Seu story</span>
+        <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Seu story</span>
       </div>
 
       {/* Lista de Stories */}
@@ -77,9 +77,9 @@ export function Stories() {
           onClick={() => openStories(group)}
         >
           <div className="w-16 h-16 rounded-full border-2 border-blue-500 p-0.5 animate-gradient-xy">
-            <Avatar src={group.user.avatarUrl} name={group.user.name} size="lg" className="border-2 border-white" />
+            <Avatar src={group.user.avatarUrl} name={group.user.name} size="lg" className="border-2 border-white dark:border-navy-900" />
           </div>
-          <span className="text-[10px] text-gray-700 font-medium max-w-[64px] truncate">
+          <span className="text-[10px] text-gray-700 dark:text-gray-300 font-medium max-w-[64px] truncate">
             {group.user.name.split(' ')[0]}
           </span>
         </div>

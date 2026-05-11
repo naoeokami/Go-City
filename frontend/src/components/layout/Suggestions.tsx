@@ -26,17 +26,17 @@ export function Suggestions() {
 
   return (
     <div className="card sticky top-24">
-      <h3 className="font-bold text-gray-900 mb-4 px-1">Sugestões</h3>
+      <h3 className="font-bold text-gray-900 dark:text-white mb-4 px-1">Sugestões</h3>
       <div className="space-y-4">
         {users.map((user: any) => (
           <div key={user.id} className="flex items-center justify-between gap-3">
             <Link to={`/profile/${user.username}`} className="flex items-center gap-3 flex-1 min-w-0">
               <Avatar src={user.avatarUrl} name={user.name} size="md" />
               <div className="min-w-0">
-                <p className="font-bold text-sm text-gray-900 truncate leading-none mb-1">
+                <p className="font-bold text-sm text-gray-900 dark:text-white truncate leading-none mb-1">
                   {user.name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">@{user.username}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">@{user.username}</p>
               </div>
             </Link>
             <Button

@@ -3,8 +3,8 @@ import api from './api'
 import type { Team } from '../types'
 
 export const teamService = {
-  async list(sport?: string): Promise<Team[]> {
-    const response = await api.get('/teams', { params: { sport } })
+  async list(sport?: string, myTeams?: boolean): Promise<Team[]> {
+    const response = await api.get('/teams', { params: { sport, myTeams: myTeams ? 'true' : undefined } })
     return response.data
   },
 

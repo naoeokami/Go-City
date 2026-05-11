@@ -21,7 +21,7 @@ export function ChampionshipCard({ championship: c }: Props) {
 
   return (
     <Link to={`/championships/${c.id}`} className="group block">
-      <div className="card !p-0 overflow-hidden border-none shadow-sm group-hover:shadow-xl group-hover:shadow-blue-100/50 transition-all duration-300 group-hover:-translate-y-1 bg-white">
+      <div className="card !p-0 overflow-hidden border-none shadow-sm group-hover:shadow-xl group-hover:shadow-blue-100/50 dark:group-hover:shadow-none transition-all duration-300 group-hover:-translate-y-1 bg-white dark:bg-navy-800/80">
         
         {/* Banner com Overlay */}
         <div className="relative h-44 overflow-hidden">
@@ -51,39 +51,39 @@ export function ChampionshipCard({ championship: c }: Props) {
            {/* Grid Infos */}
            <div className="grid grid-cols-2 gap-y-3">
               <div className="flex items-center gap-2">
-                 <div className="p-1.5 bg-gray-50 rounded-lg">
+                 <div className="p-1.5 bg-gray-50 dark:bg-navy-700 rounded-lg">
                     <Calendar className="w-3.5 h-3.5 text-gray-400" />
                  </div>
-                 <span className="text-xs font-bold text-gray-600">
+                 <span className="text-xs font-bold text-gray-600 dark:text-gray-300">
                     {format(new Date(c.startDate), "dd MMM", { locale: ptBR })}
                  </span>
               </div>
               <div className="flex items-center gap-2">
-                 <div className="p-1.5 bg-gray-50 rounded-lg">
+                 <div className="p-1.5 bg-gray-50 dark:bg-navy-700 rounded-lg">
                     <MapPin className="w-3.5 h-3.5 text-gray-400" />
                  </div>
-                 <span className="text-xs font-bold text-gray-600 truncate">
+                 <span className="text-xs font-bold text-gray-600 dark:text-gray-300 truncate">
                     {c.city}
                  </span>
               </div>
               <div className="flex items-center gap-2">
-                 <div className="p-1.5 bg-gray-50 rounded-lg">
+                 <div className="p-1.5 bg-gray-50 dark:bg-navy-700 rounded-lg">
                     <Users className="w-3.5 h-3.5 text-gray-400" />
                  </div>
-                 <span className="text-xs font-bold text-gray-600">
+                 <span className="text-xs font-bold text-gray-600 dark:text-gray-300">
                     {c._count.registrations}/{c.maxParticipants || '∞'}
                  </span>
               </div>
               <div className="flex justify-end items-center">
-                 <span className={`text-sm font-black ${c.registrationFee === 0 ? 'text-green-500' : 'text-gray-900'}`}>
+                 <span className={`text-sm font-black ${c.registrationFee === 0 ? 'text-green-500' : 'text-gray-900 dark:text-white'}`}>
                     {c.registrationFee === 0 ? 'GRÁTIS' : `R$ ${c.registrationFee.toFixed(0)}`}
                  </span>
               </div>
            </div>
 
-           <div className="pt-4 border-t border-gray-50 flex items-center justify-between group-hover/btn:text-blue-600">
+           <div className="pt-4 border-t border-gray-50 dark:border-navy-700 flex items-center justify-between group-hover/btn:text-blue-600">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ver Detalhes</span>
-              <div className="p-1 bg-gray-50 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">
+              <div className="p-1 bg-gray-50 dark:bg-navy-700 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">
                  <ChevronRight className="w-4 h-4" />
               </div>
            </div>

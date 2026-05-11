@@ -16,7 +16,7 @@ export function Navbar() {
   const [search, setSearch] = useState('')
   const [showPredictions, setShowPredictions] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const searchRef = useRef<HTMLFormElement>(null)
+  const searchRef = useRef<HTMLDivElement>(null)
   
   // Dark Mode State
   const [isDark, setIsDark] = useState(() => {
@@ -55,8 +55,8 @@ export function Navbar() {
     enabled: search.trim().length > 1,
   })
 
-  const unreadCount = notifications?.filter((n: any) => !n.read).length || 0
-  const unreadMsgCount = conversations?.filter((c: any) => c.unreadCount > 0).length || 0
+  const unreadCount = notifications?.filter((n: { read: boolean }) => !n.read).length || 0
+  const unreadMsgCount = conversations?.filter((c: { unreadCount: number }) => c.unreadCount > 0).length || 0
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -136,7 +136,7 @@ export function Navbar() {
               <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-navy-800 rounded-2xl shadow-xl dark:shadow-black/50 border border-gray-100 dark:border-navy-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
                 {searchResults && searchResults.length > 0 ? (
                   <div className="max-h-80 overflow-y-auto py-2">
-                    {searchResults.map((user: any) => (
+                    {searchResults.map((user: { id: string, name: string, username: string, avatarUrl?: string }) => (
                       <Link 
                         key={user.id} 
                         to={`/profile/${user.username}`}

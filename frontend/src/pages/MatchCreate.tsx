@@ -16,7 +16,7 @@ export function MatchCreatePage() {
   const queryIsOfficial = searchParams.get('isOfficial') === 'true'
 
   const [matchType, setMatchType] = useState<'TEAM' | 'INDIVIDUAL'>('TEAM')
-  const [isOfficial, setIsOfficial] = useState(queryIsOfficial || false)
+  const [isOfficial] = useState(queryIsOfficial || false)
   const [sport, setSport] = useState('Futebol')
   const [date, setDate] = useState('')
   const [location, setLocation] = useState('')
@@ -38,6 +38,7 @@ export function MatchCreatePage() {
 
   const createMatchMutation = useMutation({
     mutationFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = {
         date: new Date(date).toISOString(),
         location,
@@ -102,20 +103,20 @@ export function MatchCreatePage() {
           <Sword className="w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-black text-gray-900 leading-tight">Registrar Partida Casual</h1>
-          <p className="text-gray-500 text-sm font-medium">Lançamento de resultados de amistosos e jogos rápidos.</p>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-white leading-tight">Registrar Partida Casual</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Lançamento de resultados de amistosos e jogos rápidos.</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Tipo de Partida */}
         <div className="grid grid-cols-1 gap-4">
-          <div className="card !p-2 bg-white flex gap-1">
+          <div className="card !p-2 bg-white dark:bg-navy-800 flex gap-1">
              <button 
                type="button"
                onClick={() => { setMatchType('TEAM'); setTeam1Id(''); setTeam2Id('') }}
                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                 matchType === 'TEAM' ? 'bg-orange-600 text-white shadow-lg shadow-orange-100' : 'text-gray-400 hover:bg-gray-50'
+                 matchType === 'TEAM' ? 'bg-orange-600 text-white shadow-lg shadow-orange-100 dark:shadow-none' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-navy-700'
                }`}
              >
                 <Users className="w-3 h-3" /> Times
@@ -124,20 +125,20 @@ export function MatchCreatePage() {
                type="button"
                onClick={() => { setMatchType('INDIVIDUAL'); setSide1UserIds([]); setSide2UserIds([]) }}
                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                 matchType === 'INDIVIDUAL' ? 'bg-orange-600 text-white shadow-lg shadow-orange-100' : 'text-gray-400 hover:bg-gray-50'
+                 matchType === 'INDIVIDUAL' ? 'bg-orange-600 text-white shadow-lg shadow-orange-100 dark:shadow-none' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-navy-700'
                }`}
              >
                 <User className="w-3 h-3" /> Individual (Mix)
              </button>
           </div>
           
-          <div className="card !p-4 bg-orange-50/20 border-2 border-orange-100 flex items-center justify-between">
+          <div className="card !p-4 bg-orange-50/20 dark:bg-orange-500/10 border-2 border-orange-100 dark:border-orange-500/20 flex items-center justify-between">
              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-orange-100 text-orange-600">
+                <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400">
                    <Sparkles className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                   <p className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-none mb-1">
+                   <p className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-widest leading-none mb-1">
                       Partida Amistosa (Não Oficial)
                    </p>
                    <p className="text-[9px] text-gray-400 font-bold">
@@ -149,7 +150,7 @@ export function MatchCreatePage() {
           </div>
         </div>
 
-        <div className="card !p-8 space-y-6 bg-white border-none shadow-sm">
+        <div className="card !p-8 space-y-6 bg-white dark:bg-navy-800 border-none shadow-sm">
           <div>
             <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Modalidade Esportiva</label>
             <div className="flex gap-2 flex-wrap">
@@ -160,8 +161,8 @@ export function MatchCreatePage() {
                   onClick={() => setSport(s)}
                   className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-tighter transition-all ${
                     sport === s
-                      ? 'bg-blue-600 text-white shadow-xl shadow-blue-100'
-                      : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                      ? 'bg-blue-600 text-white shadow-xl shadow-blue-100 dark:shadow-none'
+                      : 'bg-gray-50 dark:bg-navy-900 text-gray-400 hover:bg-gray-100 dark:hover:bg-navy-700'
                   }`}
                 >
                   {s}
@@ -179,7 +180,7 @@ export function MatchCreatePage() {
                 type="datetime-local"
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full bg-gray-50 dark:bg-navy-900 dark:text-white border-none rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20"
                 required
               />
             </div>
@@ -192,7 +193,7 @@ export function MatchCreatePage() {
                 value={location}
                 onChange={e => setLocation(e.target.value)}
                 placeholder="Ex: Arena Beach"
-                className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full bg-gray-50 dark:bg-navy-900 dark:text-white border-none rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
           </div>
@@ -200,7 +201,7 @@ export function MatchCreatePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Lado 1 */}
-          <div className="card !p-6 space-y-4 bg-white border-none shadow-sm">
+          <div className="card !p-6 space-y-4 bg-white dark:bg-navy-800 border-none shadow-sm">
             {matchType === 'TEAM' ? (
               <TeamSearchSelector 
                 label="Desafiante (Time 1)"
@@ -216,20 +217,20 @@ export function MatchCreatePage() {
               />
             )}
             {isFinished && (
-              <div className="pt-4 border-t border-gray-50 flex flex-col items-center">
-                 <label className="text-[10px] font-black text-gray-300 uppercase mb-2">Pontuação</label>
+              <div className="pt-4 border-t border-gray-50 dark:border-navy-700 flex flex-col items-center">
+                 <label className="text-[10px] font-black text-gray-300 dark:text-gray-500 uppercase mb-2">Pontuação</label>
                  <input
                     type="number"
                     value={score1}
                     onChange={e => setScore1(parseInt(e.target.value))}
-                    className="w-24 h-16 bg-gray-50 border-none rounded-2xl text-center text-3xl font-black text-gray-900 outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    className="w-24 h-16 bg-gray-50 dark:bg-navy-900 border-none rounded-2xl text-center text-3xl font-black text-gray-900 dark:text-white outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
                  />
               </div>
             )}
           </div>
 
           {/* Lado 2 */}
-          <div className="card !p-6 space-y-4 bg-white border-none shadow-sm">
+          <div className="card !p-6 space-y-4 bg-white dark:bg-navy-800 border-none shadow-sm">
             {matchType === 'TEAM' ? (
               <TeamSearchSelector 
                 label="Oponente (Time 2)"
@@ -245,21 +246,21 @@ export function MatchCreatePage() {
               />
             )}
             {isFinished && (
-              <div className="pt-4 border-t border-gray-50 flex flex-col items-center">
-                 <label className="text-[10px] font-black text-gray-300 uppercase mb-2">Pontuação</label>
+              <div className="pt-4 border-t border-gray-50 dark:border-navy-700 flex flex-col items-center">
+                 <label className="text-[10px] font-black text-gray-300 dark:text-gray-500 uppercase mb-2">Pontuação</label>
                  <input
                     type="number"
                     value={score2}
                     onChange={e => setScore2(parseInt(e.target.value))}
-                    className="w-24 h-16 bg-gray-50 border-none rounded-2xl text-center text-3xl font-black text-gray-900 outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    className="w-24 h-16 bg-gray-50 dark:bg-navy-900 border-none rounded-2xl text-center text-3xl font-black text-gray-900 dark:text-white outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
                  />
               </div>
             )}
           </div>
         </div>
 
-        <div className="card !p-8 space-y-6 bg-white border-none shadow-sm relative overflow-hidden">
-          <div className="flex items-center justify-between p-4 bg-orange-50/50 border border-orange-100 rounded-2xl">
+        <div className="card !p-8 space-y-6 bg-white dark:bg-navy-800 border-none shadow-sm relative overflow-hidden">
+          <div className="flex items-center justify-between p-4 bg-orange-50/50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 rounded-2xl">
             <div className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -268,7 +269,7 @@ export function MatchCreatePage() {
                 onChange={e => setIsFinished(e.target.checked)}
                 className="w-5 h-5 rounded-lg text-orange-600 border-orange-200 outline-none"
               />
-              <label htmlFor="isFinished" className="text-sm font-black text-orange-900 cursor-pointer select-none">
+              <label htmlFor="isFinished" className="text-sm font-black text-orange-900 dark:text-orange-100 cursor-pointer select-none">
                 Lançar resultado da partida agora
               </label>
             </div>
@@ -276,7 +277,7 @@ export function MatchCreatePage() {
 
           {isFinished && (
             <div className="pt-4 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-               <div className="p-4 bg-red-50/50 border border-red-100 rounded-2xl flex items-center gap-3">
+               <div className="p-4 bg-red-50/50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-2xl flex items-center gap-3">
                  <input
                    type="checkbox"
                    id="isWalkover"
@@ -284,7 +285,7 @@ export function MatchCreatePage() {
                    onChange={e => setIsWalkover(e.target.checked)}
                    className="w-5 h-5 rounded-lg text-red-600 border-red-200"
                  />
-                 <label htmlFor="isWalkover" className="text-sm font-black text-red-900 cursor-pointer">
+                 <label htmlFor="isWalkover" className="text-sm font-black text-red-900 dark:text-red-100 cursor-pointer">
                    Declarar vitória por W.O.
                  </label>
                </div>
@@ -295,7 +296,7 @@ export function MatchCreatePage() {
                   <select
                     value={winnerId}
                     onChange={e => setWinnerId(e.target.value)}
-                    className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-red-500/20"
+                    className="w-full bg-gray-50 dark:bg-navy-900 dark:text-white border-none rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-red-500/20"
                     required={isWalkover}
                   >
                     <option value="">Selecionar...</option>
@@ -319,7 +320,7 @@ export function MatchCreatePage() {
 
         <Button
           type="submit"
-          className="w-full h-16 rounded-[2rem] text-base font-black border-none shadow-2xl bg-orange-500 hover:bg-orange-600 shadow-orange-200"
+          className="w-full h-16 rounded-[2rem] text-base font-black border-none shadow-2xl bg-orange-500 hover:bg-orange-600 shadow-orange-200 dark:shadow-none"
           loading={createMatchMutation.isPending}
         >
           {isFinished ? (

@@ -60,7 +60,7 @@ export function TeamDetailPage() {
     <div className="max-w-4xl mx-auto pb-12">
       <button 
         onClick={() => navigate('/teams')}
-        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 transition-colors"
+        className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft className="w-5 h-5" />
         Voltar para meus times
@@ -69,14 +69,14 @@ export function TeamDetailPage() {
       {/* Header do Time */}
       <div className="card mb-6">
         <div className="flex flex-col md:flex-row items-center gap-6 p-4">
-          <div className="w-24 h-24 bg-blue-100 rounded-3xl flex items-center justify-center text-blue-600 shadow-inner">
+          <div className="w-24 h-24 bg-blue-100 dark:bg-blue-500/20 rounded-3xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
             <Shield className="w-12 h-12" />
           </div>
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl font-bold text-gray-900">{team.name}</h1>
-            <p className="text-gray-500 mt-1">{team.sport} · Criado em {new Date(team.createdAt).toLocaleDateString()}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{team.name}</h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">{team.sport} · Criado em {new Date(team.createdAt).toLocaleDateString()}</p>
             <div className="flex items-center gap-2 mt-4 justify-center md:justify-start">
-              <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100 uppercase">
+              <span className="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-100 dark:border-blue-500/30 uppercase">
                 {team.members?.length || 0} Atletas
               </span>
             </div>
@@ -87,33 +87,33 @@ export function TeamDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Lista de Membros */}
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Users className="w-6 h-6 text-blue-600" />
             Elenco do Time
           </h2>
           <div className="grid grid-cols-1 gap-3">
             {team.members?.map((member: any) => (
-              <div key={member.id} className="card flex items-center justify-between hover:border-blue-100 transition-colors">
+              <div key={member.id} className="card flex items-center justify-between hover:border-blue-100 dark:hover:border-navy-600 transition-colors">
                 <div className="flex items-center gap-3">
                   <Avatar src={member.user.avatarUrl} name={member.user.name} size="md" />
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="font-semibold text-gray-900">{member.user.name}</p>
+                      <p className="font-semibold text-gray-900 dark:text-white">{member.user.name}</p>
                       {member.user.id === team.captainId && (
-                        <span className="bg-yellow-50 text-yellow-700 text-[10px] px-1.5 py-0.5 rounded font-bold border border-yellow-200 uppercase">
+                        <span className="bg-yellow-50 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 text-[10px] px-1.5 py-0.5 rounded font-bold border border-yellow-200 dark:border-yellow-500/30 uppercase">
                           Capitão
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500">@{member.user.username}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">@{member.user.username}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-3">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                        member.status === 'ACCEPTED' ? 'bg-green-50 text-green-600 border-green-100' :
-                        member.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600 border-yellow-100' :
-                        'bg-red-50 text-red-600 border-red-100'
+                        member.status === 'ACCEPTED' ? 'bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 border-green-100 dark:border-green-500/30' :
+                        member.status === 'PENDING' ? 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-100 dark:border-yellow-500/30' :
+                        'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-100 dark:border-red-500/30'
                     }`}>
                         {member.status === 'ACCEPTED' ? 'Ativo' : member.status === 'PENDING' ? 'Pendente' : 'Recusado'}
                     </span>
@@ -145,21 +145,21 @@ export function TeamDetailPage() {
 
         {/* Painel do Capitão - Convidar Membros */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <UserPlus className="w-6 h-6 text-blue-600" />
             Convidar
           </h2>
           
           {isCaptain ? (
             <div className="card">
-              <p className="text-sm text-gray-600 mb-4 lh-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 lh-relaxed">
                 Adicione novos atletas ao seu time buscando pelo nome ou @username.
               </p>
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Nome ou usuário..."
-                  className="w-full border-gray-200 rounded-xl py-2.5 pl-4 pr-10 text-sm focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full border-gray-200 dark:border-navy-700 dark:bg-navy-900 dark:text-white rounded-xl py-2.5 pl-4 pr-10 text-sm focus:ring-2 focus:ring-blue-500/20"
                   value={searchUsername}
                   onChange={(e) => setSearchUsername(e.target.value)}
                 />
@@ -173,12 +173,12 @@ export function TeamDetailPage() {
                       <p className="text-xs text-center text-gray-400 py-2">Nenhum atleta encontrado</p>
                    ) : (
                       searchResults?.map((user: any) => (
-                        <div key={user.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg border border-gray-100">
+                        <div key={user.id} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-navy-800 rounded-lg border border-gray-100 dark:border-navy-700">
                           <div className="flex items-center gap-2 min-w-0">
                             <Avatar src={user.avatarUrl} name={user.name} size="sm" />
                             <div className="min-w-0">
-                              <p className="text-xs font-bold text-gray-900 truncate">{user.name}</p>
-                              <p className="text-[10px] text-gray-500 truncate">@{user.username}</p>
+                              <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{user.name}</p>
+                              <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">@{user.username}</p>
                             </div>
                           </div>
                           <button
@@ -195,8 +195,8 @@ export function TeamDetailPage() {
               )}
             </div>
           ) : (
-            <div className="card bg-gray-50 border-dashed">
-              <p className="text-sm text-gray-500 text-center py-4">
+            <div className="card bg-gray-50 dark:bg-navy-800 border-dashed dark:border-navy-700">
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
                 Apenas o capitão pode convidar novos membros para o time.
               </p>
             </div>

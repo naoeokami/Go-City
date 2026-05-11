@@ -1,6 +1,6 @@
 import { useState }       from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Send, Image as ImageIcon, Video, X, Trophy, ChevronRight }    from 'lucide-react'
+import { Send, Image as ImageIcon, Video, X, Trophy }    from 'lucide-react'
 import toast              from 'react-hot-toast'
 import { Link }           from 'react-router-dom'
 import { PostCard }       from '../components/feed/PostCard'
@@ -31,7 +31,7 @@ export function FeedPage() {
     queryKey: ['championships', 'highlight'],
     queryFn: async () => {
       const res = await championshipService.list()
-      return res.find((c: any) => c.status === 'OPEN') || res[0]
+      return res.data?.find((c: { status: string }) => c.status === 'OPEN') || res.data?.[0]
     }
   })
 
@@ -65,7 +65,7 @@ export function FeedPage() {
       const res = await uploadService.uploadImage(file)
       setImageUrl(res.url)
       toast.success(file.type.startsWith('video/') ? 'Vídeo carregado!' : 'Imagem carregada!')
-    } catch (err) {
+    } catch {
       toast.error('Erro ao subir arquivo')
     } finally {
       setIsUploading(false)
@@ -78,7 +78,7 @@ export function FeedPage() {
       {/* Premium Hero Card */}
       {highlightChampionship && (
         <Link to={`/championships/${highlightChampionship.id}`} className="block relative overflow-hidden rounded-[2rem] shadow-2xl group transition-all hover:scale-[1.01] hover:shadow-blue-500/20 dark:shadow-none border border-transparent dark:border-navy-700">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 z-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-navy-900 dark:via-blue-900/40 dark:to-navy-900 z-0">
              {highlightChampionship.imageUrl && (
                 <img src={highlightChampionship.imageUrl} className="w-full h-full object-cover mix-blend-overlay opacity-40 group-hover:scale-105 transition-transform duration-700" alt="Highlight" />
              )}
@@ -116,8 +116,8 @@ export function FeedPage() {
               onChange={e => setContent(e.target.value)}
               placeholder="O que está acontecendo no mundo esportivo? ⚽🏀🎾"
               rows={3}
-              className="w-full resize-none outline-none text-gray-800
-                         placeholder-gray-400 text-sm"
+              className="w-full resize-none outline-none text-gray-800 dark:text-gray-100 bg-transparent
+                         placeholder-gray-400 dark:placeholder-gray-500 text-sm"
             />
 
             {/* Seletor de esporte */}
@@ -130,7 +130,7 @@ export function FeedPage() {
                     className={`text-xs px-2 py-1 rounded-full border transition-colors ${
                       sport === s
                         ? 'bg-blue-600 text-white border-blue-600'
-                        : 'border-gray-300 text-gray-600 hover:border-blue-400'
+                        : 'border-gray-300 text-gray-600 hover:border-blue-400 dark:border-navy-600 dark:text-gray-400 dark:hover:border-blue-500'
                     }`}
                   >
                     {s}
@@ -146,13 +146,13 @@ export function FeedPage() {
                     <video
                       src={imageUrl}
                       controls
-                      className="max-h-60 rounded-lg border border-gray-100"
+                      className="max-h-60 rounded-lg border border-gray-100 dark:border-navy-700"
                     />
                   ) : (
                     <img
                       src={imageUrl}
                       alt="Post preview"
-                      className="max-h-60 rounded-lg border border-gray-100"
+                      className="max-h-60 rounded-lg border border-gray-100 dark:border-navy-700"
                     />
                   )}
                 <button
@@ -166,7 +166,7 @@ export function FeedPage() {
             )}
 
             <div className="flex items-center justify-between mt-2 pt-2
-                            border-t border-gray-100">
+                            border-t border-gray-100 dark:border-navy-700">
               <div className="flex items-center gap-4">
                 <label className={`cursor-pointer transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : 'text-gray-400 hover:text-blue-500'}`}>
                   <input
@@ -210,15 +210,15 @@ export function FeedPage() {
           {[1, 2, 3].map(i => (
             <div key={i} className="card animate-pulse">
               <div className="flex gap-3 mb-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                <div className="w-10 h-10 bg-gray-200 dark:bg-navy-800 rounded-full" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-3 bg-gray-200 rounded w-32" />
-                  <div className="h-3 bg-gray-200 rounded w-24" />
+                  <div className="h-3 bg-gray-200 dark:bg-navy-800 rounded w-32" />
+                  <div className="h-3 bg-gray-200 dark:bg-navy-800 rounded w-24" />
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="h-3 bg-gray-200 rounded" />
-                <div className="h-3 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 dark:bg-navy-800 rounded" />
+                <div className="h-3 bg-gray-200 dark:bg-navy-800 rounded w-3/4" />
               </div>
             </div>
           ))}
@@ -226,14 +226,15 @@ export function FeedPage() {
       ) : posts?.length === 0 ? (
         <div className="card text-center py-12">
           <p className="text-4xl mb-3">🏟️</p>
-          <p className="font-semibold text-gray-700 mb-1">
+          <p className="font-semibold text-gray-700 dark:text-gray-300 mb-1">
             Seu feed está vazio
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Siga outros atletas e fãs para ver as publicações aqui!
           </p>
         </div>
       ) : (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         posts?.map((item: any) => (
           item.feedType === 'MATCH_HIGHLIGHT' 
             ? <MatchHighlightCard key={item.id} activity={item} />
