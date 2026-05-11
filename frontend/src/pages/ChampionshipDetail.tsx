@@ -102,6 +102,74 @@ export function ChampionshipDetailPage() {
         </div>
       </div>
 
+      
+      {/* Winner Banner if Finished */}
+      {c.status === 'FINISHED' && (
+        <div className="mb-8 animate-in zoom-in duration-700">
+           <div className="relative overflow-hidden bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 rounded-[2.5rem] p-1 shadow-2xl shadow-yellow-200 dark:shadow-none">
+              <div className="bg-white dark:bg-navy-900 rounded-[2.3rem] p-8 relative overflow-hidden">
+                 {/* Decorative elements */}
+                 <div className="absolute -top-10 -right-10 opacity-10">
+                    <Trophy className="w-48 h-48 text-yellow-500" />
+                 </div>
+                 
+                 <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                    <div className="flex items-center gap-6">
+                       <div className="relative">
+                          <div className="absolute -top-4 -left-4 bg-yellow-400 text-white p-2 rounded-full shadow-lg animate-bounce">
+                             <Trophy className="w-5 h-5" />
+                          </div>
+                          {(() => {
+                            const podium = c.results?.find((r: any) => r.phase === 'PODIUM');
+                            const champ = podium ? c.registrations?.find((r: any) => (r.teamId || r.userId) === podium.team1) : null;
+                            return (
+                              <div className="flex items-center gap-4">
+                                <Avatar 
+                                  src={champ?.team?.logoUrl || champ?.user?.avatarUrl} 
+                                  name={champ?.teamName || champ?.user?.name || '---'} 
+                                  size="xl" 
+                                  className="border-4 border-yellow-400 shadow-xl"
+                                />
+                                <div className="text-left">
+                                   <p className="text-[10px] font-black text-yellow-600 uppercase tracking-widest mb-1">Grande Campeão 🏆</p>
+                                   <h2 className="text-3xl font-black text-gray-900 dark:text-white leading-tight">
+                                      {champ?.teamName || champ?.user?.name || '---'}
+                                   </h2>
+                                </div>
+                              </div>
+                            )
+                          })()}
+                       </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 bg-gray-50 dark:bg-navy-800 p-6 rounded-3xl border border-gray-100 dark:border-navy-700">
+                       {(() => {
+                          const podium = c.results?.find((r: any) => r.phase === 'PODIUM');
+                          const runner = podium ? c.registrations?.find((r: any) => (r.teamId || r.userId) === podium.team2) : null;
+                          return (
+                            <>
+                              <div className="text-right">
+                                 <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Vice-Campeão</p>
+                                 <p className="text-lg font-black text-gray-700 dark:text-gray-200">
+                                    {runner?.teamName || runner?.user?.name || '---'}
+                                 </p>
+                              </div>
+                              <Avatar 
+                                src={runner?.team?.logoUrl || runner?.user?.avatarUrl} 
+                                name={runner?.teamName || runner?.user?.name || '---'} 
+                                size="md" 
+                                className="border-2 border-gray-200 dark:border-navy-600"
+                              />
+                            </>
+                          )
+                       })()}
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
         <div className="lg:col-span-8 space-y-8 min-w-0">
           <div className="flex gap-2 p-1.5 bg-gray-100/50 dark:bg-navy-800/50 rounded-2xl w-full md:w-fit overflow-hidden">
@@ -149,14 +217,44 @@ export function ChampionshipDetailPage() {
                  </div>
                ) : (
                  c.matches?.map(m => (
-                    <div key={m.id} className="card !p-4 sm:!p-6 bg-white dark:bg-navy-800 border-none shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
-                       <div className="w-full sm:flex-1 text-center sm:text-right sm:pr-6 font-black text-sm text-gray-900 dark:text-white">{m.team1?.name || m.player1?.name || '---'}</div>
-                       <div className="flex items-center gap-4 bg-gray-50 dark:bg-navy-900 px-6 py-2 rounded-2xl border border-gray-100 dark:border-navy-700">
-                          <span className="text-xl font-black text-gray-900 dark:text-white">{m.score1}</span>
-                          <span className="text-gray-300 font-bold">vs</span>
-                          <span className="text-xl font-black text-gray-900 dark:text-white">{m.score2}</span>
+                    <div key={m.id} className="card !p-0 overflow-hidden bg-white dark:bg-navy-800 border-none shadow-sm hover:shadow-md transition-all group">
+                       <div className="flex flex-col sm:flex-row items-stretch">
+                         {/* Match Info Header */}
+                         <div className="bg-gray-50/50 dark:bg-navy-900/50 px-4 py-2 border-b border-gray-100 dark:border-navy-700 flex justify-between items-center">
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                               {m.phase || 'Partida'} • {m.round ? `Rodada ${m.round}` : format(new Date(m.date), "HH:mm")}
+                            </span>
+                            {m.status === 'LIVE' ? (
+                               <span className="flex items-center gap-1 bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full animate-pulse uppercase">
+                                  <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+                                  Ao Vivo
+                               </span>
+                            ) : m.status === 'FINISHED' ? (
+                               <span className="bg-gray-200 dark:bg-navy-700 text-gray-500 dark:text-gray-400 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">Encerrado</span>
+                            ) : (
+                               <span className="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">Agendado</span>
+                            )}
+                         </div>
+
+                         {/* Match Body */}
+                         <div className="flex flex-1 items-center justify-between p-6 gap-4">
+                           <div className="flex-1 flex flex-col items-center sm:items-end text-center sm:text-right">
+                              <p className="font-black text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">{m.team1?.name || m.player1?.name || '---'}</p>
+                              <span className="text-[9px] text-gray-400 font-bold uppercase">Mandante</span>
+                           </div>
+
+                           <div className="flex items-center gap-4 px-6 py-2 bg-gray-50 dark:bg-navy-900 rounded-2xl border border-gray-100 dark:border-navy-700 min-w-[120px] justify-center">
+                              <span className={`text-3xl font-black ${m.status === 'LIVE' ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>{m.score1}</span>
+                              <span className="text-gray-300 font-black text-xs uppercase italic">Vs</span>
+                              <span className={`text-3xl font-black ${m.status === 'LIVE' ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>{m.score2}</span>
+                           </div>
+
+                           <div className="flex-1 flex flex-col items-center sm:items-start text-center sm:text-left">
+                              <p className="font-black text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">{m.team2?.name || m.player2?.name || '---'}</p>
+                              <span className="text-[9px] text-gray-400 font-bold uppercase">Visitante</span>
+                           </div>
+                         </div>
                        </div>
-                       <div className="w-full sm:flex-1 text-center sm:text-left sm:pl-6 font-black text-sm text-gray-900 dark:text-white">{m.team2?.name || m.player2?.name || '---'}</div>
                     </div>
                  ))
                )}

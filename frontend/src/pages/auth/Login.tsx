@@ -1,12 +1,14 @@
 // src/pages/auth/Login.tsx
+import { useState }      from 'react'
 import { useForm }       from 'react-hook-form'
 import { zodResolver }   from '@hookform/resolvers/zod'
 import { z }             from 'zod'
 import { Link }          from 'react-router-dom'
-import { Trophy } from 'lucide-react'
+import { Trophy, Eye, EyeOff } from 'lucide-react'
 import { useAuth }       from '../../hooks/useAuth'
 import { Button }        from '../../components/ui/Button'
 import { Input }         from '../../components/ui/Input'
+import { ThemeToggle }   from '../../components/ui/ThemeToggle'
 
 const schema = z.object({
   email:    z.string().email('Email inválido'),
@@ -17,6 +19,7 @@ type FormData = z.infer<typeof schema>
 
 export function LoginPage() {
   const { login, isLoadingLogin } = useAuth()
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
@@ -30,7 +33,12 @@ export function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-navy-900 dark:to-navy-950
                     flex items-center justify-center p-4">
       <div className="bg-white dark:bg-navy-800 rounded-2xl shadow-sm border border-gray-100 dark:border-navy-700
-                      p-6 sm:p-8 w-full max-w-md">
+                      p-6 sm:p-8 w-full max-w-md relative">
+        
+        {/* Theme Toggle */}
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
 
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
@@ -61,9 +69,18 @@ export function LoginPage() {
           <Input
             {...register('password')}
             label="Senha"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder="••••••"
             error={errors.password?.message}
+            rightElement={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            }
           />
 
           <Button
@@ -75,6 +92,7 @@ export function LoginPage() {
             Entrar
           </Button>
         </form>
+
 
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           Não tem uma conta?{' '}

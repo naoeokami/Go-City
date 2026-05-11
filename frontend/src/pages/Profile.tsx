@@ -157,29 +157,52 @@ export function ProfilePage() {
           </span>
         </div>
 
-        {/* Contadores */}
-        <div className="flex gap-6 mt-4 pt-4 border-t border-gray-100 dark:border-navy-700">
-          <div className="text-center">
-            <p className="font-bold text-gray-900 dark:text-white">{profile._count?.posts ?? 0}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Posts</p>
+        {/* Contadores e Score Principal */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-100 dark:border-navy-700">
+          <div className="text-center p-3 bg-gray-50 dark:bg-navy-900 rounded-2xl border border-gray-100 dark:border-navy-700/50">
+            <p className="text-lg font-black text-gray-900 dark:text-white leading-none mb-1">{profile._count?.followers ?? 0}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Seguidores</p>
           </div>
-          <div className="text-center">
-            <p className="font-bold text-gray-900 dark:text-white">{profile._count?.followers ?? 0}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Seguidores</p>
+          <div className="text-center p-3 bg-gray-50 dark:bg-navy-900 rounded-2xl border border-gray-100 dark:border-navy-700/50">
+            <p className="text-lg font-black text-gray-900 dark:text-white leading-none mb-1">{profile._count?.following ?? 0}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Seguindo</p>
           </div>
-          <div className="text-center">
-            <p className="font-bold text-gray-900 dark:text-white">{profile._count?.following ?? 0}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Seguindo</p>
+          <div className="text-center p-3 bg-gray-50 dark:bg-navy-900 rounded-2xl border border-gray-100 dark:border-navy-700/50">
+            <p className="text-lg font-black text-gray-900 dark:text-white leading-none mb-1">{profile.gamification?.matchesPlayed ?? 0}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partidas</p>
           </div>
-          <div className="text-center px-4 py-1.5 bg-blue-50 dark:bg-blue-500/10 rounded-lg">
-            <p className="font-bold text-blue-700 dark:text-blue-400 flex items-center justify-center gap-1">
-              <Trophy className="w-3.5 h-3.5" />
+          <div className="text-center p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-500/20">
+            <p className="text-lg font-black leading-none mb-1 flex items-center justify-center gap-1">
+              <Trophy className="w-4 h-4 text-blue-200" />
               {profile.score ?? 0}
             </p>
-            <p className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Score</p>
+            <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Global Score</p>
           </div>
         </div>
       </div>
+
+      {/* Sports Summary Card */}
+      {profile.sport?.length > 0 && (
+        <div className="card !p-5 mb-6 mx-4 md:mx-0 bg-white dark:bg-navy-800 border-none shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-5">
+             <Trophy className="w-24 h-24" />
+          </div>
+          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <Trophy className="w-3.5 h-3.5 text-orange-500" /> Resumo Esportivo
+          </h3>
+          <div className="flex gap-4">
+            {profile.sport.map((s: string) => (
+              <div key={s} className="flex-1 p-4 bg-gray-50 dark:bg-navy-900 rounded-2xl border border-gray-100 dark:border-navy-700/50">
+                <p className="text-sm font-black text-gray-900 dark:text-white mb-1">{s}</p>
+                <div className="flex items-center gap-2">
+                   <div className="px-2 py-0.5 bg-green-500/10 text-green-600 text-[9px] font-black rounded uppercase">Ativo</div>
+                   <span className="text-[10px] text-gray-400 font-bold uppercase">Nível Pro</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Badges & Achievements (Gamification) */}
       {profile.gamification && (

@@ -170,6 +170,7 @@ export interface Match {
   date:           string
   location?:      string
   phase?:         string
+  round?:         number
   status:         'SCHEDULED' | 'LIVE' | 'FINISHED' | 'CANCELLED'
   winnerId?:      string
   isWalkover?:    boolean

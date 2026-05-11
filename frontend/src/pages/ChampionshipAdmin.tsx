@@ -3,18 +3,137 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { 
   Trophy, Users, Settings, BarChart2, 
-  Swords, Plus, 
+  Swords, Plus, Minus,
   Trash2, Check, X, LayoutGrid, 
-  History, ShieldCheck
+  History, ShieldCheck, Shield
 } from 'lucide-react'
 import { championshipService } from '../services/championship.service'
 import { matchService } from '../services/match.service'
 import { Button } from '../components/ui/Button'
 import { Avatar } from '../components/ui/Avatar'
+import { ThemeToggle } from '../components/ui/ThemeToggle'
 
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 
+function ParticipantLocalSelector({
+    label,
+    value,
+    onChange,
+    registrations,
+    type,
+    excludeId
+}: {
+    label: string
+    value: string
+    onChange: (val: string) => void
+    registrations: any[]
+    type: 'TEAM' | 'INDIVIDUAL'
+    excludeId?: string
+}) {
+    const [isOpen, setIsOpen] = useState(false)
+    const [search, setSearch] = useState('')
+
+    const filtered = registrations.filter(r => {
+        const id = type === 'TEAM' ? r.teamId : r.userId
+        if (excludeId && id === excludeId) return false
+        
+        const name = type === 'TEAM' ? r.teamName : r.user?.name
+        return name?.toLowerCase().includes(search.toLowerCase())
+    })
+
+    const selectedReg = registrations.find(r => (type === 'TEAM' ? r.teamId : r.userId) === value)
+    const selectedName = selectedReg ? (type === 'TEAM' ? selectedReg.teamName : selectedReg.user?.name) : 'Selecionar Inscrito...'
+    const selectedAvatar = selectedReg ? (type === 'TEAM' ? selectedReg.team?.logoUrl : selectedReg.user?.avatarUrl) : null
+
+    return (
+        <div className="space-y-2 relative">
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{label}</label>
+            <div 
+                className="w-full h-12 bg-white dark:bg-navy-900 border border-gray-200 dark:border-white/10 rounded-xl px-3 flex items-center justify-between cursor-pointer hover:border-blue-500 transition-colors"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <div className="flex items-center gap-2 overflow-hidden">
+                    {selectedReg && <Avatar src={selectedAvatar} name={selectedName || 'U'} size="sm" />}
+                    <span className="text-xs font-bold text-gray-900 dark:text-white truncate">{selectedName}</span>
+                </div>
+                <div className="text-gray-400 text-xs">▼</div>
+            </div>
+
+            {isOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-navy-800 border border-gray-200 dark:border-white/10 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className="p-2 border-b border-gray-100 dark:border-white/5">
+                        <input 
+                            type="text" 
+                            placeholder="Buscar..." 
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            className="w-full bg-gray-50 dark:bg-navy-900 rounded-lg p-2 text-xs font-bold outline-none border border-transparent focus:border-blue-500 transition-colors dark:text-white"
+                            autoFocus
+                        />
+                    </div>
+                    <div className="max-h-48 overflow-y-auto">
+                        {filtered.length === 0 ? (
+                            <div className="p-4 text-center text-xs text-gray-500 font-bold">Nenhum resultado</div>
+                        ) : (
+                            filtered.map(r => {
+                                const id = type === 'TEAM' ? r.teamId : r.userId
+                                const name = type === 'TEAM' ? r.teamName : r.user?.name
+                                const avatar = type === 'TEAM' ? r.team?.logoUrl : r.user?.avatarUrl
+                                return (
+                                    <div 
+                                        key={r.id} 
+                                        className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-navy-700 cursor-pointer transition-colors"
+                                        onClick={() => { onChange(id); setIsOpen(false); setSearch('') }}
+                                    >
+                                        <Avatar src={avatar} name={name || 'U'} size="sm" />
+                                        <span className="text-xs font-bold text-gray-900 dark:text-white">{name}</span>
+                                    </div>
+                                )
+                            })
+                        )}
+                    </div>
+                </div>
+            )}
+            
+            {/* Click outside backdrop overlay */}
+            {isOpen && <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />}
+        </div>
+    )
+}
+
+function ScoreStepper({ 
+    value, 
+    onChange 
+}: { 
+    value: number, 
+    onChange: (val: number) => void 
+}) {
+    return (
+        <div className="flex items-center bg-gray-50 dark:bg-navy-900 border-2 border-gray-100 dark:border-white/10 rounded-[1.25rem] overflow-hidden shadow-inner group focus-within:border-blue-500 transition-all">
+            <button 
+                type="button"
+                onClick={() => onChange(Math.max(0, value - 1))}
+                className="w-10 h-14 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-navy-800 transition-all active:scale-90"
+            >
+                <Minus className="w-4 h-4" />
+            </button>
+            <input 
+                type="number" 
+                className="w-12 h-14 bg-transparent dark:text-white text-center font-black text-2xl outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                value={value}
+                onChange={e => onChange(parseInt(e.target.value) || 0)}
+            />
+            <button 
+                type="button"
+                onClick={() => onChange(value + 1)}
+                className="w-10 h-14 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-navy-800 transition-all active:scale-90"
+            >
+                <Plus className="w-4 h-4" />
+            </button>
+        </div>
+    )
+}
 
 type AdminTab = 'overview' | 'registrations' | 'groups' | 'brackets' | 'results' | 'stats'
 
@@ -24,6 +143,19 @@ export function ChampionshipAdminPage() {
     const [activeTab, setActiveTab] = useState<AdminTab>('overview')
     const [participantsPerGroup, setParticipantsPerGroup] = useState(4)
     const [advancePerGroup, setAdvancePerGroup] = useState(2)
+    
+    // Winner Selection State
+    const [championId, setChampionId] = useState('')
+    const [runnerUpId, setRunnerUpId] = useState('')
+    const [thirdPlaceId, setThirdPlaceId] = useState('')
+    const [isFinishing, setIsFinishing] = useState(false)
+
+    // Inline Match Creation State
+    const [isCreatingMatch, setIsCreatingMatch] = useState(false)
+    const [newMatchTeam1Id, setNewMatchTeam1Id] = useState('')
+    const [newMatchTeam2Id, setNewMatchTeam2Id] = useState('')
+    const [newMatchDate, setNewMatchDate] = useState('')
+    const [newMatchPhase, setNewMatchPhase] = useState('GROUP')
 
 
     const { data: championship, isLoading } = useQuery({
@@ -58,8 +190,18 @@ export function ChampionshipAdminPage() {
         mutationFn: () => championshipService.generateBrackets(id!),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
-            toast.success('Chaves de mata-mata geradas! ⚔️')
+            toast.success('Estrutura de mata-mata gerada! ⚔️')
         }
+    })
+
+    const finishChampionshipMutation = useMutation({
+        mutationFn: (winners: any) => championshipService.finish(id!, winners),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
+            toast.success('Campeonato finalizado e pontos distribuídos! 🏆')
+            setActiveTab('overview')
+        },
+        onError: () => toast.error('Erro ao finalizar campeonato')
     })
 
     const updateRegStatusMutation = useMutation({
@@ -82,15 +224,74 @@ export function ChampionshipAdminPage() {
     const updateMatchMutation = useMutation({
         mutationFn: ({ matchId, score1, score2, status }: { matchId: string, score1: number, score2: number, status?: 'SCHEDULED' | 'FINISHED' }) =>
             matchService.updateScore(matchId, { score1, score2, status }),
-        onSuccess: () => {
+        onMutate: async (newMatch) => {
+            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+            await queryClient.cancelQueries({ queryKey: ['championship-admin', id] })
+
+            // Snapshot the previous value
+            const previousData = queryClient.getQueryData(['championship-admin', id])
+
+            // Optimistically update to the new value
+            queryClient.setQueryData(['championship-admin', id], (old: any) => {
+                if (!old) return old
+                return {
+                    ...old,
+                    matches: old.matches.map((m: any) => 
+                        m.id === newMatch.matchId 
+                            ? { ...m, score1: newMatch.score1, score2: newMatch.score2, status: newMatch.status || m.status }
+                            : m
+                    )
+                }
+            })
+
+            return { previousData }
+        },
+        onError: (err, newMatch, context) => {
+            // Rollback to the previous value if mutation fails
+            queryClient.setQueryData(['championship-admin', id], context?.previousData)
+            toast.error('Erro ao atualizar placar')
+        },
+        onSettled: () => {
+            // Always refetch after error or success to keep server state in sync
             queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
-            toast.success('Placar atualizado!')
+            queryClient.invalidateQueries({ queryKey: ['championship-standings', id] })
         }
     })
 
-    const updateMatchScore = (matchId: string, score1: number, score2: number, status: 'SCHEDULED' | 'FINISHED' = 'SCHEDULED') => {
+    const updateMatchScore = (matchId: string, score1: number, score2: number, status?: 'SCHEDULED' | 'FINISHED') => {
         updateMatchMutation.mutate({ matchId, score1, score2, status })
     }
+
+    const createMatchMutation = useMutation({
+        mutationFn: async () => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const payload: any = {
+                date: new Date(newMatchDate).toISOString(),
+                championshipId: id,
+                isOfficial: true,
+                phase: newMatchPhase,
+                status: 'SCHEDULED'
+            }
+            if (championship?.registrationType === 'TEAM') {
+                payload.team1Id = newMatchTeam1Id
+                payload.team2Id = newMatchTeam2Id
+            } else {
+                payload.player1Id = newMatchTeam1Id
+                payload.player2Id = newMatchTeam2Id
+            }
+            return matchService.create(payload)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['championship-admin', id] })
+            queryClient.invalidateQueries({ queryKey: ['championship-standings', id] })
+            toast.success('Partida criada com sucesso!')
+            setIsCreatingMatch(false)
+            setNewMatchTeam1Id('')
+            setNewMatchTeam2Id('')
+            setNewMatchDate('')
+        },
+        onError: () => toast.error('Erro ao criar partida')
+    })
 
     if (isLoading) return <div className="p-8 text-center">Carregando painel de controle...</div>
     if (!championship) return <div className="p-8 text-center">Campeonato não encontrado</div>
@@ -114,6 +315,7 @@ export function ChampionshipAdminPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <ThemeToggle className="bg-gray-50 dark:bg-navy-700" />
                     <span className="bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest">
                         {championship.status}
                     </span>
@@ -132,8 +334,12 @@ export function ChampionshipAdminPage() {
                     {[
                         { id: 'overview',      label: 'Visão Geral',    icon: LayoutGrid },
                         { id: 'registrations', label: 'Inscrições',     icon: Users },
-                        { id: 'groups',        label: 'Fase de Grupos', icon: BarChart2 },
-                        { id: 'brackets',      label: 'Mata-Mata',      icon: Trophy },
+                        ...(championship.format !== 'KNOCKOUT' ? [
+                            { id: 'groups', label: championship.format === 'ROUND_ROBIN' ? 'Classificação' : 'Fase de Grupos', icon: BarChart2 }
+                        ] : []),
+                        ...(championship.format !== 'ROUND_ROBIN' ? [
+                            { id: 'brackets', label: 'Mata-Mata', icon: Trophy }
+                        ] : []),
                         { id: 'results',       label: 'Lançar Placares', icon: Swords },
                         { id: 'stats',         label: 'Estatísticas',   icon: History }
                     ].map(tab => (
@@ -228,14 +434,90 @@ export function ChampionshipAdminPage() {
                                         </Button>
                                         <Button 
                                             className="bg-gray-800 hover:bg-black h-12 text-[10px] font-black uppercase"
-                                            onClick={() => updateStatusMutation.mutate('FINISHED')}
-                                            loading={updateStatusMutation.isPending}
+                                            onClick={() => setIsFinishing(true)}
                                         >
-                                            Finalizar Tudo
+                                            Encerrar Campeonato
                                         </Button>
                                     </div>
                                 </div>
                             </div>
+
+                            {isFinishing && (
+                                <div className="card !p-8 bg-blue-600 text-white animate-in slide-in-from-top-4">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div>
+                                            <h3 className="text-xl font-black uppercase tracking-tighter">Encerrar Campeonato</h3>
+                                            <p className="text-xs text-blue-100">Selecione os vencedores para distribuir a pontuação final.</p>
+                                        </div>
+                                        <button onClick={() => setIsFinishing(false)} className="p-2 hover:bg-white/10 rounded-lg">
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">
+                                                <Trophy className="w-3 h-3 text-yellow-400" /> Campeão (1º)
+                                            </label>
+                                            <select 
+                                                value={championId}
+                                                onChange={e => setChampionId(e.target.value)}
+                                                className="w-full bg-white/10 border border-white/10 rounded-xl p-3 text-sm font-bold outline-none focus:bg-white/20 transition-all text-white"
+                                            >
+                                                <option value="" className="text-gray-900">Selecionar...</option>
+                                                {championship.registrations?.filter(r => r.status === 'APPROVED').map(r => (
+                                                    <option key={r.id} value={r.teamId || r.userId} className="text-gray-900">
+                                                        {r.teamName || r.user?.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">
+                                                <Shield className="w-3 h-3 text-gray-300" /> Vice-Campeão (2º)
+                                            </label>
+                                            <select 
+                                                value={runnerUpId}
+                                                onChange={e => setRunnerUpId(e.target.value)}
+                                                className="w-full bg-white/10 border border-white/10 rounded-xl p-3 text-sm font-bold outline-none focus:bg-white/20 transition-all text-white"
+                                            >
+                                                <option value="" className="text-gray-900">Selecionar...</option>
+                                                {championship.registrations?.filter(r => r.status === 'APPROVED').map(r => (
+                                                    <option key={r.id} value={r.teamId || r.userId} className="text-gray-900">
+                                                        {r.teamName || r.user?.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">
+                                                <Shield className="w-3 h-3 text-orange-400" /> 3º Lugar
+                                            </label>
+                                            <select 
+                                                value={thirdPlaceId}
+                                                onChange={e => setThirdPlaceId(e.target.value)}
+                                                className="w-full bg-white/10 border border-white/10 rounded-xl p-3 text-sm font-bold outline-none focus:bg-white/20 transition-all text-white"
+                                            >
+                                                <option value="" className="text-gray-900">Selecionar...</option>
+                                                {championship.registrations?.filter(r => r.status === 'APPROVED').map(r => (
+                                                    <option key={r.id} value={r.teamId || r.userId} className="text-gray-900">
+                                                        {r.teamName || r.user?.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <Button 
+                                        className="w-full bg-white text-blue-600 h-14 rounded-2xl font-black uppercase text-xs shadow-xl"
+                                        disabled={!championId || !runnerUpId}
+                                        onClick={() => finishChampionshipMutation.mutate({ championId, runnerUpId, thirdPlaceId })}
+                                        loading={finishChampionshipMutation.isPending}
+                                    >
+                                        Confirmar Encerramento e Premiar Atletas
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -301,32 +583,43 @@ export function ChampionshipAdminPage() {
                         <div className="space-y-8 animate-in slide-in-from-right-4">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h2 className="text-2xl font-black text-gray-900 dark:text-white">Fase de Grupos</h2>
-                                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Gerencie chaves e classificações</p>
+                                    <h2 className="text-2xl font-black text-gray-900 dark:text-white">
+                                        {championship.format === 'ROUND_ROBIN' ? "Classificação Geral" : "Fase de Grupos"}
+                                    </h2>
+                                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+                                        {championship.format === 'ROUND_ROBIN' ? "Tabela de pontuação acumulada" : "Gerencie chaves e classificações"}
+                                    </p>
                                 </div>
-                                <div className="flex items-center gap-4 flex-wrap">
-                                    <div className="flex items-center gap-2">
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase">Times p/ grupo:</label>
-                                        <input type="number" min="2" value={participantsPerGroup} onChange={e => setParticipantsPerGroup(Number(e.target.value))} className="w-14 h-10 bg-white dark:bg-navy-900 border border-gray-200 dark:border-navy-700 rounded-xl text-center font-black text-sm outline-none focus:border-blue-500 transition-colors" />
+                                {championship.format !== 'ROUND_ROBIN' && (
+                                    <div className="flex items-center gap-4 flex-wrap">
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-[10px] font-bold text-gray-500 uppercase">Times p/ grupo:</label>
+                                            <input type="number" min="2" value={participantsPerGroup} onChange={e => setParticipantsPerGroup(Number(e.target.value))} className="w-14 h-10 bg-white dark:bg-navy-900 border border-gray-200 dark:border-navy-700 rounded-xl text-center font-black text-sm outline-none focus:border-blue-500 transition-colors" />
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-[10px] font-bold text-gray-500 uppercase">Classificam:</label>
+                                            <input type="number" min="1" value={advancePerGroup} onChange={e => setAdvancePerGroup(Number(e.target.value))} className="w-14 h-10 bg-white dark:bg-navy-900 border border-gray-200 dark:border-navy-700 rounded-xl text-center font-black text-sm outline-none focus:border-blue-500 transition-colors" />
+                                        </div>
+                                        <Button 
+                                            className="bg-blue-600 hover:bg-blue-700 px-6 h-10 rounded-xl font-black uppercase text-[10px] tracking-widest"
+                                            onClick={() => generateGroupsMutation.mutate({ participantsPerGroup, advancePerGroup })}
+                                            loading={generateGroupsMutation.isPending}
+                                        >
+                                            Gerar Grupos
+                                        </Button>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase">Classificam:</label>
-                                        <input type="number" min="1" value={advancePerGroup} onChange={e => setAdvancePerGroup(Number(e.target.value))} className="w-14 h-10 bg-white dark:bg-navy-900 border border-gray-200 dark:border-navy-700 rounded-xl text-center font-black text-sm outline-none focus:border-blue-500 transition-colors" />
-                                    </div>
-                                    <Button 
-                                        className="bg-blue-600 hover:bg-blue-700 px-6 h-10 rounded-xl font-black uppercase text-[10px] tracking-widest"
-                                        onClick={() => generateGroupsMutation.mutate({ participantsPerGroup, advancePerGroup })}
-                                        loading={generateGroupsMutation.isPending}
-                                    >
-                                        Gerar Grupos
-                                    </Button>
-                                </div>
+                                )}
                             </div>
 
                             {standings?.length === 0 ? (
                                 <div className="py-20 text-center card bg-white dark:bg-navy-800 border-dashed dark:border-navy-700">
                                     <BarChart2 className="w-16 h-16 text-gray-200 dark:text-gray-700 mx-auto mb-4" />
-                                    <p className="text-gray-400 font-black uppercase tracking-widest">Nenhum grupo gerado ainda</p>
+                                    <p className="text-gray-400 font-black uppercase tracking-widest">
+                                        {championship.format === 'ROUND_ROBIN' 
+                                            ? "A classificação será exibida automaticamente conforme os resultados forem lançados" 
+                                            : "Nenhum grupo gerado ainda"
+                                        }
+                                    </p>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -409,13 +702,83 @@ export function ChampionshipAdminPage() {
                                      <h2 className="text-2xl font-black text-gray-900 dark:text-white">Lançamento de Resultados</h2>
                                      <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Controle total sobre as partidas do torneio</p>
                                  </div>
-                                 <Link 
-                                     to={`/matches/create?championshipId=${id}&isOfficial=true`}
-                                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 dark:shadow-none"
-                                 >
-                                     <Plus className="w-4 h-4" /> Nova Partida
-                                 </Link>
+                                 {!isCreatingMatch && (
+                                     <button 
+                                         onClick={() => setIsCreatingMatch(true)}
+                                         className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 dark:shadow-none"
+                                     >
+                                         <Plus className="w-4 h-4" /> Nova Partida
+                                     </button>
+                                 )}
                             </div>
+
+                            {isCreatingMatch && (
+                                <div className="card !p-6 bg-blue-50 dark:bg-navy-800 border-2 border-blue-100 dark:border-white/10 shadow-sm animate-in fade-in slide-in-from-top-4">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-sm font-black text-blue-900 dark:text-blue-400 uppercase tracking-widest">Criar Partida Oficial</h3>
+                                        <button onClick={() => setIsCreatingMatch(false)} className="p-1 hover:bg-blue-100 dark:hover:bg-navy-700 rounded-lg text-blue-400 transition-colors">
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+                                        <ParticipantLocalSelector 
+                                            label="Mandante"
+                                            value={newMatchTeam1Id}
+                                            onChange={setNewMatchTeam1Id}
+                                            registrations={championship.registrations?.filter(r => r.status === 'APPROVED') || []}
+                                            type={championship.registrationType}
+                                            excludeId={newMatchTeam2Id}
+                                        />
+                                        <ParticipantLocalSelector 
+                                            label="Visitante"
+                                            value={newMatchTeam2Id}
+                                            onChange={setNewMatchTeam2Id}
+                                            registrations={championship.registrations?.filter(r => r.status === 'APPROVED') || []}
+                                            type={championship.registrationType}
+                                            excludeId={newMatchTeam1Id}
+                                        />
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Fase</label>
+                                            <select 
+                                                value={newMatchPhase}
+                                                onChange={e => setNewMatchPhase(e.target.value)}
+                                                className="w-full h-12 bg-white dark:bg-navy-900 border border-gray-200 dark:border-white/10 rounded-xl px-3 text-xs font-bold outline-none focus:border-blue-500 transition-colors dark:text-white"
+                                            >
+                                                {championship.format === 'ROUND_ROBIN' ? (
+                                                    <option value="GROUP">Pontos Corridos</option>
+                                                ) : (
+                                                    <>
+                                                        <option value="GROUP">Fase de Grupos</option>
+                                                        <option value="ROUND_OF_16">Oitavas de Final</option>
+                                                        <option value="QUARTERFINAL">Quartas de Final</option>
+                                                        <option value="SEMIFINAL">Semifinal</option>
+                                                        <option value="FINAL">Final</option>
+                                                    </>
+                                                )}
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Data e Hora</label>
+                                            <input 
+                                                type="datetime-local" 
+                                                value={newMatchDate}
+                                                onChange={e => setNewMatchDate(e.target.value)}
+                                                className="w-full h-12 bg-white dark:bg-navy-900 border border-gray-200 dark:border-white/10 rounded-xl px-3 text-xs font-bold outline-none focus:border-blue-500 transition-colors dark:text-white"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mt-6 flex justify-end">
+                                        <Button 
+                                            className="bg-blue-600 hover:bg-blue-700 px-8 h-12 rounded-xl font-black uppercase text-xs shadow-lg shadow-blue-200 dark:shadow-none"
+                                            onClick={() => createMatchMutation.mutate()}
+                                            disabled={!newMatchTeam1Id || !newMatchTeam2Id || newMatchTeam1Id === newMatchTeam2Id || !newMatchDate}
+                                            loading={createMatchMutation.isPending}
+                                        >
+                                            {newMatchTeam1Id === newMatchTeam2Id && newMatchTeam1Id ? "Selecione participantes diferentes" : "Registrar e Agendar"}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="grid gap-4">
                                 {championship.matches?.map(match => (
@@ -452,18 +815,14 @@ export function ChampionshipAdminPage() {
                                             </div>
 
                                             <div className="w-full sm:col-span-3 flex items-center justify-center gap-4">
-                                                <input 
-                                                    type="number" 
-                                                    className="w-14 h-14 bg-gray-50 dark:bg-navy-900 border-2 border-gray-100 dark:border-navy-700 dark:text-white rounded-[1.25rem] text-center font-black text-2xl outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-navy-800 transition-all shadow-inner"
-                                                    defaultValue={match.score1}
-                                                    onChange={e => updateMatchScore(match.id, parseInt(e.target.value), match.score2)}
+                                                <ScoreStepper 
+                                                    value={match.score1}
+                                                    onChange={val => updateMatchScore(match.id, val, match.score2, match.status as any)}
                                                 />
                                                 <span className="text-gray-300 font-black">X</span>
-                                                <input 
-                                                    type="number" 
-                                                    className="w-14 h-14 bg-gray-50 dark:bg-navy-900 border-2 border-gray-100 dark:border-navy-700 dark:text-white rounded-[1.25rem] text-center font-black text-2xl outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-navy-800 transition-all shadow-inner"
-                                                    defaultValue={match.score2}
-                                                    onChange={e => updateMatchScore(match.id, match.score1, parseInt(e.target.value))}
+                                                <ScoreStepper 
+                                                    value={match.score2}
+                                                    onChange={val => updateMatchScore(match.id, match.score1, val, match.status as any)}
                                                 />
                                             </div>
 
@@ -503,7 +862,7 @@ export function ChampionshipAdminPage() {
                                                 </div>
                                             ))}
                                         {(!standings || standings.length === 0) && (
-                                            <p className="text-xs text-gray-400 text-center py-8">Aguardando geração de grupos</p>
+                                            <p className="text-xs text-gray-400 text-center py-8">Aguardando resultados das partidas</p>
                                         )}
                                     </div>
                                 </div>
@@ -526,7 +885,7 @@ export function ChampionshipAdminPage() {
                                                 </div>
                                             ))}
                                         {(!standings || standings.length === 0) && (
-                                            <p className="text-xs text-gray-400 text-center py-8">Aguardando geração de grupos</p>
+                                            <p className="text-xs text-gray-400 text-center py-8">Aguardando resultados das partidas</p>
                                         )}
                                     </div>
                                 </div>

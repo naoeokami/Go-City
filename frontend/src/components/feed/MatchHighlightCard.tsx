@@ -56,8 +56,14 @@ export function MatchHighlightCard({ activity }: MatchHighlightCardProps) {
                 </div>
                 <span className="text-4xl md:text-5xl font-black text-blue-600 italic tracking-tighter drop-shadow-sm">{match.score2}</span>
              </div>
-             <div className="bg-blue-100/50 dark:bg-blue-500/10 px-3 py-1 rounded-full border border-blue-100 dark:border-blue-500/20">
-                <span className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">Encerrada</span>
+             <div className={`${
+               match.status === 'LIVE' ? 'bg-red-500 text-white animate-pulse' : 
+               match.status === 'FINISHED' ? 'bg-gray-100 dark:bg-navy-700 text-gray-500' : 
+               'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
+             } px-3 py-1 rounded-full border ${match.status === 'LIVE' ? 'border-red-600' : 'border-blue-100 dark:border-blue-500/20'}`}>
+                <span className="text-[9px] font-black uppercase tracking-widest">
+                   {match.status === 'LIVE' ? '• Ao Vivo' : match.status === 'FINISHED' ? 'Encerrada' : 'Agendada'}
+                </span>
              </div>
           </div>
 

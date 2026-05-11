@@ -38,10 +38,79 @@ export function PostCard({ post }: PostCardProps) {
 
   const likeMutation = useMutation({
     mutationFn: () => postService.toggleLike(post.id),
-    onSuccess:  () => {
-      queryClient.invalidateQueries({ queryKey: ['feed'] })
+    onMutate: async () => {
+      // Keys to update optimistically
+      const queryKeys = [['feed'], ['user-posts'], ['explore-posts'], ['profile-posts', post.author.username]]
+      
+      // Cancel queries to avoid overwriting optimistic update
+      for (const key of queryKeys) {
+        await queryClient.cancelQueries({ queryKey: key })
+      }
+      
+      // Snapshot previous values
+      const snapshots = new Map()
+      queryKeys.forEach(key => {
+        snapshots.set(JSON.stringify(key), queryClient.getQueryData(key))
+      })
+
+      // Helper to update posts in a list
+      const updatePostInList = (old: any) => {
+        if (!old) return old
+        // Handle both simple arrays and paginated objects
+        const list = Array.isArray(old) ? old : old.pages ? old.pages.flatMap((p: any) => p.data || p) : old.data || []
+        
+        const updateItem = (item: any) => {
+          if (item.id === post.id) {
+            const isLiking = !item.liked
+            return {
+              ...item,
+              liked: isLiking,
+              _count: {
+                ...item._count,
+                likes: (item._count?.likes || 0) + (isLiking ? 1 : -1)
+              }
+            }
+          }
+          return item
+        }
+
+        if (Array.isArray(old)) {
+          return old.map(updateItem)
+        } else if (old.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              data: Array.isArray(page.data) ? page.data.map(updateItem) : page.map(updateItem)
+            }))
+          }
+        } else if (old.data) {
+          return { ...old, data: old.data.map(updateItem) }
+        }
+        return old
+      }
+
+      // Optimistically update all query keys
+      queryKeys.forEach(key => {
+        queryClient.setQueryData(key, updatePostInList)
+      })
+
+      return { snapshots }
     },
-    onError: () => toast.error('Erro ao curtir post'),
+    onError: (err, variables, context) => {
+      if (context?.snapshots) {
+        context.snapshots.forEach((value: any, keyString: string) => {
+          queryClient.setQueryData(JSON.parse(keyString), value)
+        })
+      }
+      toast.error('Erro ao curtir post')
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
+      queryClient.invalidateQueries({ queryKey: ['user-posts'] })
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] })
+      queryClient.invalidateQueries({ queryKey: ['profile-posts', post.author.username] })
+    },
   })
 
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), {

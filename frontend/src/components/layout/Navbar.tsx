@@ -7,6 +7,7 @@ import { notificationService } from '../../services/notification.service'
 import { chatService } from '../../services/chat.service'
 import { userService } from '../../services/user.service'
 import { Avatar }       from '../ui/Avatar'
+import { ThemeToggle }   from '../ui/ThemeToggle'
 
 export function Navbar() {
   const { user, logout } = useAuthStore()
@@ -18,22 +19,8 @@ export function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLDivElement>(null)
   
-  // Dark Mode State
-  const [isDark, setIsDark] = useState(() => {
-    return document.documentElement.classList.contains('dark') || 
-           localStorage.getItem('theme') === 'dark'
-  })
+  // State remains for local notifications/search but theme is centralized
   const [showMobileMenu, setShowMobileMenu] = useState(false)
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }, [isDark])
 
   const { data: notifications } = useQuery({
     queryKey: ['notifications'],
@@ -179,13 +166,7 @@ export function Navbar() {
           <div className="flex items-center gap-2 md:gap-4">
             
             {/* Dark Mode Toggle */}
-            <button 
-              onClick={() => setIsDark(!isDark)}
-              className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-navy-800 rounded-full transition-colors outline-none focus:ring-2 focus:ring-blue-500/20"
-              aria-label="Toggle Dark Mode"
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            <ThemeToggle />
 
             {/* Ícones Desktop */}
             <div className="hidden md:flex items-center gap-1">
@@ -254,6 +235,7 @@ export function Navbar() {
         <Link to={user ? `/profile/${user.username}` : '/login'} className="p-0.5 active:scale-95 transition-all outline-none">
           <Avatar src={user?.avatarUrl} name={user?.name || ''} size="sm" className="w-8 h-8 border-2 border-transparent active:border-blue-500 transition-all" />
         </Link>
+        <ThemeToggle className="bg-gray-50 dark:bg-navy-800" />
       </div>
       {/* Mobile Drawer Menu */}
       {showMobileMenu && (

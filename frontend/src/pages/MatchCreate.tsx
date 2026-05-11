@@ -16,7 +16,7 @@ export function MatchCreatePage() {
   const queryIsOfficial = searchParams.get('isOfficial') === 'true'
 
   const [matchType, setMatchType] = useState<'TEAM' | 'INDIVIDUAL'>('TEAM')
-  const [isOfficial] = useState(queryIsOfficial || false)
+  const [isOfficial] = useState(queryIsOfficial || !!queryChampionshipId)
   const [sport, setSport] = useState('Futebol')
   const [date, setDate] = useState('')
   const [location, setLocation] = useState('')
@@ -99,12 +99,16 @@ export function MatchCreatePage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-orange-100 text-orange-600 rounded-2xl shadow-lg shadow-orange-100/20">
+        <div className={`p-3 rounded-2xl shadow-lg ${isOfficial ? 'bg-blue-100 text-blue-600 shadow-blue-100/20' : 'bg-orange-100 text-orange-600 shadow-orange-100/20'}`}>
           <Sword className="w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-black text-gray-900 dark:text-white leading-tight">Registrar Partida Casual</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Lançamento de resultados de amistosos e jogos rápidos.</p>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-white leading-tight">
+             {isOfficial ? 'Registrar Partida do Torneio' : 'Registrar Partida Casual'}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+             {isOfficial ? 'Lançamento de resultados de campeonato (pontuação máxima).' : 'Lançamento de resultados de amistosos e jogos rápidos.'}
+          </p>
         </div>
       </div>
 
@@ -132,22 +136,41 @@ export function MatchCreatePage() {
              </button>
           </div>
           
-          <div className="card !p-4 bg-orange-50/20 dark:bg-orange-500/10 border-2 border-orange-100 dark:border-orange-500/20 flex items-center justify-between">
-             <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400">
-                   <Sparkles className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                   <p className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-widest leading-none mb-1">
-                      Partida Amistosa (Não Oficial)
-                   </p>
-                   <p className="text-[9px] text-gray-400 font-bold">
-                      Ganha metade dos pontos (50%) por participação e vitória.
-                   </p>
-                </div>
-             </div>
-             <div className="bg-orange-500 w-1.5 h-1.5 rounded-full animate-pulse" />
-          </div>
+          {isOfficial ? (
+            <div className="card !p-4 bg-blue-50/20 dark:bg-blue-500/10 border-2 border-blue-100 dark:border-blue-500/20 flex items-center justify-between">
+               <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400">
+                     <Sword className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                     <p className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-widest leading-none mb-1">
+                        Partida Oficial de Campeonato
+                     </p>
+                     <p className="text-[9px] text-gray-400 font-bold">
+                        Garante 100% dos pontos. A pontuação será creditada ao fim do torneio.
+                     </p>
+                  </div>
+               </div>
+               <div className="bg-blue-500 w-1.5 h-1.5 rounded-full animate-pulse" />
+            </div>
+          ) : (
+            <div className="card !p-4 bg-orange-50/20 dark:bg-orange-500/10 border-2 border-orange-100 dark:border-orange-500/20 flex items-center justify-between">
+               <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400">
+                     <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                     <p className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-widest leading-none mb-1">
+                        Partida Amistosa (Não Oficial)
+                     </p>
+                     <p className="text-[9px] text-gray-400 font-bold">
+                        Ganha metade dos pontos (50%) por participação e vitória.
+                     </p>
+                  </div>
+               </div>
+               <div className="bg-orange-500 w-1.5 h-1.5 rounded-full animate-pulse" />
+            </div>
+          )}
         </div>
 
         <div className="card !p-8 space-y-6 bg-white dark:bg-navy-800 border-none shadow-sm">
@@ -199,7 +222,7 @@ export function MatchCreatePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-30">
           {/* Lado 1 */}
           <div className="card !p-6 space-y-4 bg-white dark:bg-navy-800 border-none shadow-sm">
             {matchType === 'TEAM' ? (
@@ -259,17 +282,17 @@ export function MatchCreatePage() {
           </div>
         </div>
 
-        <div className="card !p-8 space-y-6 bg-white dark:bg-navy-800 border-none shadow-sm relative overflow-hidden">
-          <div className="flex items-center justify-between p-4 bg-orange-50/50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 rounded-2xl">
-            <div className="flex items-center gap-3">
+        <div className="card !p-8 space-y-6 bg-white dark:bg-navy-800 border-none shadow-sm relative overflow-hidden z-10">
+          <div className={`flex items-center justify-between p-4 border rounded-2xl ${isOfficial ? 'bg-blue-50/50 dark:bg-blue-500/10 border-blue-100 dark:border-blue-500/20' : 'bg-orange-50/50 dark:bg-orange-500/10 border-orange-100 dark:border-orange-500/20'}`}>
+            <div className={`flex items-center gap-3 ${isOfficial ? 'text-blue-900 dark:text-blue-100' : 'text-orange-900 dark:text-orange-100'}`}>
               <input
                 type="checkbox"
                 id="isFinished"
                 checked={isFinished}
                 onChange={e => setIsFinished(e.target.checked)}
-                className="w-5 h-5 rounded-lg text-orange-600 border-orange-200 outline-none"
+                className={`w-5 h-5 rounded-lg outline-none ${isOfficial ? 'text-blue-600 border-blue-200' : 'text-orange-600 border-orange-200'}`}
               />
-              <label htmlFor="isFinished" className="text-sm font-black text-orange-900 dark:text-orange-100 cursor-pointer select-none">
+              <label htmlFor="isFinished" className="text-sm font-black cursor-pointer select-none">
                 Lançar resultado da partida agora
               </label>
             </div>
@@ -320,7 +343,7 @@ export function MatchCreatePage() {
 
         <Button
           type="submit"
-          className="w-full h-16 rounded-[2rem] text-base font-black border-none shadow-2xl bg-orange-500 hover:bg-orange-600 shadow-orange-200 dark:shadow-none"
+          className={`w-full h-16 rounded-[2rem] text-base font-black border-none shadow-2xl ${isOfficial ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-200' : 'bg-orange-500 hover:bg-orange-600 shadow-orange-200'} dark:shadow-none`}
           loading={createMatchMutation.isPending}
         >
           {isFinished ? (
