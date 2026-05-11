@@ -104,12 +104,11 @@ export function ChampionshipDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
         <div className="lg:col-span-8 space-y-8 min-w-0">
-          <div className="flex gap-2 p-1.5 bg-gray-100/50 dark:bg-navy-800/50 rounded-2xl w-full md:w-fit overflow-x-auto no-scrollbar scrollbar-hide">
+          <div className="flex gap-2 p-1.5 bg-gray-100/50 dark:bg-navy-800/50 rounded-2xl w-full md:w-fit overflow-hidden">
             {[
               { id: 'info', label: 'Sobre', icon: Info },
               { id: 'matches', label: 'Partidas', icon: Swords },
               { id: 'registrations', label: 'Participantes', icon: Users },
-              ...(isOrganizer ? [{ id: 'management', label: 'Painel Admin', icon: Shield }] : [])
             ].map(tab => (
               <button
                 key={tab.id}
@@ -178,24 +177,25 @@ export function ChampionshipDetailPage() {
             </div>
           )}
 
-          {activeTab === 'management' && isOrganizer && (
-            <div className="card !p-12 text-center bg-blue-50/50 dark:bg-navy-800/50 border-blue-100 dark:border-navy-700 border-dashed animate-in zoom-in">
-                <ShieldCheck className="w-20 h-20 text-blue-600 dark:text-blue-500 mx-auto mb-6" />
-                <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">Painel de Gestor Profissional</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-                    Acesse o painel completo para gerenciar chaves, grupos, mata-mata, estatísticas e lançar resultados de forma profissional.
-                </p>
-                <Link 
-                    to={`/championships/${c.id}/admin`}
-                    className="inline-flex items-center gap-3 px-10 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-sm shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-105 active:scale-95"
-                >
-                    Abrir Gerenciador de Torneio
-                </Link>
-            </div>
-          )}
+          {/* O painel admin agora está fixo na barra lateral para o organizador */}
         </div>
 
         <div className="lg:col-span-4 space-y-6 text-left">
+          {isOrganizer && (
+            <div className="bg-blue-600 !p-6 rounded-[2rem] shadow-xl shadow-blue-500/20 mb-6 text-white overflow-hidden relative group animate-in slide-in-from-right duration-500">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                <ShieldCheck className="w-20 h-20" />
+              </div>
+              <h3 className="text-lg font-black uppercase tracking-tighter mb-1">Painel do Organizador</h3>
+              <p className="text-xs text-blue-100 mb-4 font-medium">Você tem acesso total às ferramentas de gestão deste campeonato.</p>
+              <Link 
+                to={`/championships/${c.id}/admin`}
+                className="bg-white text-blue-600 w-full py-3 rounded-xl font-black text-[10px] uppercase flex items-center justify-center gap-2 hover:bg-blue-50 transition-colors shadow-lg"
+              >
+                Gerenciar Torneio
+              </Link>
+            </div>
+          )}
           {c.status === 'OPEN' && !isOrganizer && (
             <div className="bg-white dark:bg-navy-800 !p-8 rounded-[2rem] border-none shadow-2xl shadow-blue-200/20 dark:shadow-none animate-in bounce-in duration-500">
               <h3 className="text-xl font-black text-gray-900 dark:text-white mb-6">Inscreva-se</h3>

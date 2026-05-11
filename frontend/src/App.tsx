@@ -53,6 +53,10 @@ export default function App() {
             <PublicRoute><RegisterPage /></PublicRoute>
           } />
 
+          <Route path="/championships/:id/admin" element={
+            <PrivateRoute><ChampionshipAdminPage /></PrivateRoute>
+          } />
+
           <Route path="/" element={
             <PrivateRoute><Layout /></PrivateRoute>
           }>
@@ -60,7 +64,6 @@ export default function App() {
             <Route path="feed"               element={<FeedPage />} />
             <Route path="championships"      element={<ChampionshipsPage />} />
             <Route path="championships/create" element={<ChampionshipCreatePage />} />
-            <Route path="championships/:id/admin" element={<ChampionshipAdminPage />} />
             <Route path="championships/:id"  element={<ChampionshipDetailPage />} />
             <Route path="matches/create"       element={<MatchCreatePage />} />
             <Route path="ranking"            element={<RankingPage />} />
