@@ -36,7 +36,7 @@ export function Comments({ postId }: CommentsProps) {
   })
 
   return (
-    <div className="mt-4 pt-4 border-t border-gray-100 space-y-4">
+    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-navy-700 space-y-4">
       {/* Form */}
       <div className="flex gap-3 px-1">
         <Avatar src={user?.avatarUrl} name={user?.name || ''} size="sm" className="flex-shrink-0" />
@@ -46,7 +46,7 @@ export function Comments({ postId }: CommentsProps) {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Escreva um comentário..."
-            className="flex-1 min-w-0 bg-gray-100 border-none rounded-full px-4 py-1.5 text-sm outline-none focus:ring-1 focus:ring-blue-500"
+            className="flex-1 min-w-0 bg-gray-100 dark:bg-navy-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 border-none rounded-full px-4 py-1.5 text-sm outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && content.trim()) {
                 addCommentMutation.mutate()
@@ -56,7 +56,7 @@ export function Comments({ postId }: CommentsProps) {
           <button
             onClick={() => addCommentMutation.mutate()}
             disabled={!content.trim() || addCommentMutation.isPending}
-            className="text-blue-600 disabled:opacity-50 flex-shrink-0 ml-1"
+            className="text-blue-600 dark:text-blue-500 disabled:opacity-50 flex-shrink-0 ml-1 hover:scale-110 transition-transform"
           >
             <Send className="w-5 h-5" />
           </button>
@@ -67,8 +67,8 @@ export function Comments({ postId }: CommentsProps) {
       <div className="space-y-3">
         {isLoading ? (
           <div className="animate-pulse flex gap-2">
-            <div className="w-8 h-8 bg-gray-200 rounded-full" />
-            <div className="flex-1 h-8 bg-gray-200 rounded-lg" />
+            <div className="w-8 h-8 bg-gray-200 dark:bg-navy-800 rounded-full" />
+            <div className="flex-1 h-8 bg-gray-200 dark:bg-navy-800 rounded-lg" />
           </div>
         ) : (
           comments?.map((comment: any) => (
