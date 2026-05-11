@@ -57,7 +57,6 @@ export function PostCard({ post }: PostCardProps) {
       const updatePostInList = (old: any) => {
         if (!old) return old
         // Handle both simple arrays and paginated objects
-        const list = Array.isArray(old) ? old : old.pages ? old.pages.flatMap((p: any) => p.data || p) : old.data || []
         
         const updateItem = (item: any) => {
           if (item.id === post.id) {
@@ -97,7 +96,7 @@ export function PostCard({ post }: PostCardProps) {
 
       return { snapshots }
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.snapshots) {
         context.snapshots.forEach((value: any, keyString: string) => {
           queryClient.setQueryData(JSON.parse(keyString), value)

@@ -246,7 +246,7 @@ export function ChampionshipAdminPage() {
 
             return { previousData }
         },
-        onError: (err, newMatch, context) => {
+        onError: (_err, _newMatch, context) => {
             // Rollback to the previous value if mutation fails
             queryClient.setQueryData(['championship-admin', id], context?.previousData)
             toast.error('Erro ao atualizar placar')

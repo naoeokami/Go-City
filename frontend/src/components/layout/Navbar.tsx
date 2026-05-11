@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Trophy, Home, Bell, User, LogOut, Search, MessageSquare, Users, Moon, Sun } from 'lucide-react'
+import { Trophy, Home, Bell, User, LogOut, Search, MessageSquare, Users } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { notificationService } from '../../services/notification.service'

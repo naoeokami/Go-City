@@ -3,7 +3,7 @@ import { useParams, Link }  from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Calendar, MapPin, Users, Trophy,
-  ArrowLeft, Clock, Shield, Info, Swords, ShieldCheck
+  ArrowLeft, Clock, Info, Swords, ShieldCheck
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR }   from 'date-fns/locale'
