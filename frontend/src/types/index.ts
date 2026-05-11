@@ -21,6 +21,7 @@ export interface User {
   state?:     string
   isVerified: boolean
   createdAt:  string
+  score:      number
   _count?: {
     posts:     number
     followers: number
@@ -49,6 +50,9 @@ export interface Post {
   }
 }
 
+export type ChampionshipFormat = 'KNOCKOUT' | 'ROUND_ROBIN' | 'GROUPS_PLUS_KNOCKOUT'
+export type RegistrationType = 'INDIVIDUAL' | 'TEAM'
+
 export interface Championship {
   id:                   string
   title:                string
@@ -56,8 +60,11 @@ export interface Championship {
   sport:                string
   imageUrl?:            string
   status:               ChampionshipStatus
-  format:               string
+  format:               ChampionshipFormat
+  registrationType:     RegistrationType
   maxParticipants?:     number
+  advancePerGroup?:     number
+  groupsCount?:         number
   registrationFee:      number
   startDate:            string
   endDate:              string
@@ -67,14 +74,27 @@ export interface Championship {
   state:                string
   rules?:               string
   prizes?:              string
+  organizerId:          string
   createdAt:            string
+
   organizer: {
     id:         string
     name:       string
     username:   string
     avatarUrl?: string
   }
+  matches?: Match[]
   results?: Result[]
+  registrations?: {
+    id: string
+    teamId?: string
+    userId?: string
+    createdAt: string
+    team?: Team
+    user?: User
+    status?: 'PENDING' | 'APPROVED' | 'REJECTED'
+    teamName?: string
+  }[]
   _count: {
     registrations: number
   }
@@ -97,6 +117,73 @@ export interface Comment {
   content:   string
   createdAt: string
   author: {
+    id:         string
+    name:       string
+    username:   string
+    avatarUrl?: string
+  }
+}
+
+export interface Team {
+  id:          string
+  name:        string
+  description?: string
+  logoUrl?:     string
+  captainId:   string
+  sport:       string
+  city?:       string
+  state?:      string
+  createdAt:   string
+  members:     TeamMember[]
+  _count?: {
+    members: number
+  }
+}
+
+export interface TeamMember {
+  id:       string
+  teamId:   string
+  userId:   string
+  user: {
+    id:         string
+    name:       string
+    username:   string
+    avatarUrl?: string
+  }
+  role:     'CAPTAIN' | 'PLAYER' | 'COACH'
+  joinedAt: string
+}
+
+export interface Match {
+  id:             string
+  championshipId?: string
+  team1Id?:       string
+  team1?:         Team
+  team2Id?:       string
+  team2?:         Team
+  player1Id?:     string
+  player1?:       User
+  player2Id?:     string
+  player2?:       User
+  score1:         number
+  score2:         number
+  date:           string
+  location?:      string
+  phase?:         string
+  round?:         number
+  status:         'SCHEDULED' | 'LIVE' | 'FINISHED' | 'CANCELLED'
+  winnerId?:      string
+  isWalkover?:    boolean
+}
+
+export interface Message {
+  id:         string
+  content:    string
+  senderId:   string
+  receiverId: string
+  read:       boolean
+  createdAt:  string
+  sender?: {
     id:         string
     name:       string
     username:   string
