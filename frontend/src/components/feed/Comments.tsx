@@ -1,5 +1,6 @@
 // src/components/feed/Comments.tsx
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -71,12 +72,16 @@ export function Comments({ postId }: CommentsProps) {
           </div>
         ) : (
           comments?.map((comment: any) => (
-            <div key={comment.id} className="flex gap-2 group">
-              <Avatar src={comment.author.avatarUrl} name={comment.author.name} size="sm" />
+            <div key={comment.id} className="flex gap-2 group/comment">
+              <Link to={`/profile/${comment.author.username}`} className="shrink-0">
+                <Avatar src={comment.author.avatarUrl} name={comment.author.name} size="sm" />
+              </Link>
               <div className="flex-1">
-                <div className="bg-gray-100 rounded-2xl px-3 py-2 inline-block max-w-full">
-                  <p className="font-semibold text-xs text-gray-900">{comment.author.name}</p>
-                  <p className="text-sm text-gray-800 break-words">{comment.content}</p>
+                <div className="bg-gray-100 dark:bg-navy-700 rounded-2xl px-3 py-2 inline-block max-w-full">
+                  <Link to={`/profile/${comment.author.username}`} className="hover:underline">
+                    <p className="font-semibold text-xs text-gray-900 dark:text-white">{comment.author.name}</p>
+                  </Link>
+                  <p className="text-sm text-gray-800 dark:text-gray-200 break-words">{comment.content}</p>
                 </div>
                 <div className="flex items-center gap-3 mt-1 ml-1">
                   <span className="text-[10px] text-gray-500">

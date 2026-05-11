@@ -2,6 +2,7 @@
 import { useState }            from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR }                from 'date-fns/locale'
+import { Link }                   from 'react-router-dom'
 import { Heart, MessageCircle, Share2, BadgeCheck, MoreHorizontal, Trash2, Search, Play } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Post }       from '../../types'
@@ -18,6 +19,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ post }: PostCardProps) {
+  if (!post || !post.author) return null;
   const [showComments, setShowComments] = useState(false)
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false)
   const [showOptions, setShowOptions] = useState(false)
@@ -56,31 +58,35 @@ export function PostCard({ post }: PostCardProps) {
     <div className="card mb-4 overflow-hidden">
       {/* Header do post */}
       <div className="flex items-start gap-3 mb-3">
-        <Avatar
-          src={post.author.avatarUrl}
-          name={post.author.name}
-          size="md"
-        />
+        <Link to={`/profile/${post.author.username}`} className="shrink-0">
+          <Avatar
+            src={post.author.avatarUrl}
+            name={post.author.name}
+            size="md"
+          />
+        </Link>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1 flex-wrap">
-            <span className="font-semibold text-gray-900 dark:text-white text-sm">
-              {post.author.name}
-            </span>
-            {post.author.isVerified && (
-              <BadgeCheck className="w-4 h-4 text-blue-500 flex-shrink-0" />
-            )}
-            <span className="text-gray-400 text-sm">·</span>
-            <span className="text-gray-500 text-sm">{timeAgo}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 text-xs">@{post.author.username}</span>
-            {post.sport && (
-              <span className="bg-blue-100 text-blue-700 px-2 py-0.5
-                               rounded-full text-xs font-medium">
-                {post.sport}
+          <Link to={`/profile/${post.author.username}`} className="group">
+            <div className="flex items-center gap-1 flex-wrap">
+              <span className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-blue-600 transition-colors">
+                {post.author.name}
               </span>
-            )}
-          </div>
+              {post.author.isVerified && (
+                <BadgeCheck className="w-4 h-4 text-blue-500 flex-shrink-0" />
+              )}
+              <span className="text-gray-400 text-sm">·</span>
+              <span className="text-gray-500 text-sm">{timeAgo}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500 text-xs">@{post.author.username}</span>
+              {post.sport && (
+                <span className="bg-blue-100 text-blue-700 px-2 py-0.5
+                                 rounded-full text-[10px] font-black uppercase">
+                  {post.sport}
+                </span>
+              )}
+            </div>
+          </Link>
         </div>
 
         {user?.id === post.author.id && (
