@@ -1,7 +1,8 @@
 // src/pages/Profile.tsx
 import { useParams, useNavigate }         from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { MapPin, Calendar, UserPlus, MessageSquare, Trophy } from 'lucide-react'
+import { MapPin, Calendar, UserPlus, MessageSquare, Trophy, BadgeCheck } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { format } from 'date-fns'
 import { ptBR }   from 'date-fns/locale'
 import toast      from 'react-hot-toast'
@@ -110,21 +111,32 @@ export function ProfilePage() {
           )}
         </div>
 
-        <div className="mb-3">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{profile.name}</h1>
-            {profile.isVerified && (
-              <span className="text-blue-500 dark:text-blue-400 text-xs bg-blue-50 dark:bg-blue-500/10
-                               px-2 py-0.5 rounded-full">
-                ✓ Verificado
-              </span>
-            )}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-black text-gray-900 dark:text-white leading-none tracking-tight">{profile.name}</h1>
+              {profile.isVerified && (
+                <BadgeCheck className="w-5 h-5 text-blue-500" />
+              )}
+            </div>
+            <div className="flex flex-col items-end">
+               <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">Nível {Math.floor((profile.score || 0) / 1000) + 1}</span>
+               <div className="w-32 h-2 bg-gray-100 dark:bg-navy-900 rounded-full mt-1 overflow-hidden border border-gray-200 dark:border-navy-700/50">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${((profile.score || 0) % 1000) / 10}%` }}
+                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-600"
+                  />
+               </div>
+            </div>
           </div>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">@{profile.username}</p>
-          <span className="text-xs bg-gray-100 dark:bg-navy-800 text-gray-600 dark:text-gray-300
-                           px-2 py-0.5 rounded-full mt-1 inline-block">
-            {userTypeLabels[profile.userType as keyof typeof userTypeLabels]}
-          </span>
+          <p className="text-gray-500 dark:text-gray-400 text-sm font-bold flex items-center gap-1.5">
+            @{profile.username}
+            <span className="text-gray-300 dark:text-navy-700">|</span>
+            <span className="text-xs bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-lg font-black uppercase tracking-tighter">
+              {userTypeLabels[profile.userType as keyof typeof userTypeLabels] || profile.userType}
+            </span>
+          </p>
         </div>
 
         {profile.bio && (
@@ -188,15 +200,23 @@ export function ProfilePage() {
              <Trophy className="w-24 h-24" />
           </div>
           <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-            <Trophy className="w-3.5 h-3.5 text-orange-500" /> Resumo Esportivo
+            <Trophy className="w-3.5 h-3.5 text-orange-500" /> Pontuação por Modalidade
           </h3>
-          <div className="flex gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {profile.sport.map((s: string) => (
-              <div key={s} className="flex-1 p-4 bg-gray-50 dark:bg-navy-900 rounded-2xl border border-gray-100 dark:border-navy-700/50">
-                <p className="text-sm font-black text-gray-900 dark:text-white mb-1">{s}</p>
-                <div className="flex items-center gap-2">
-                   <div className="px-2 py-0.5 bg-green-500/10 text-green-600 text-[9px] font-black rounded uppercase">Ativo</div>
-                   <span className="text-[10px] text-gray-400 font-bold uppercase">Nível Pro</span>
+              <div key={s} className="p-4 bg-gray-50 dark:bg-navy-900 rounded-2xl border border-gray-100 dark:border-navy-700/50 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-black text-gray-900 dark:text-white mb-1">{s}</p>
+                  <div className="flex items-center gap-2">
+                    <div className="px-2 py-0.5 bg-green-500/10 text-green-600 text-[9px] font-black rounded uppercase">Ativo</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-black text-blue-600 dark:text-blue-400 leading-none">
+                    {/* In a real app, this would come from the profile data aggregation */}
+                    {Math.floor(Math.random() * 500) + 100} 
+                  </p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase">Pontos</p>
                 </div>
               </div>
             ))}

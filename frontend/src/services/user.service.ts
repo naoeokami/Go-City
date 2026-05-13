@@ -23,8 +23,12 @@ export const userService = {
     return response.data
   },
 
-  async getRanking(): Promise<User[]> {
-    const response = await api.get<User[]>('/users/ranking')
+  async getRanking(sport?: string, category?: string): Promise<User[]> {
+    const params = new URLSearchParams()
+    if (sport) params.append('sport', sport)
+    if (category) params.append('category', category)
+    
+    const response = await api.get<User[]>(`/users/ranking?${params.toString()}`)
     return response.data
   }
 }

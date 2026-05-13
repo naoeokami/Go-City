@@ -43,6 +43,7 @@ export function MatchCreatePage() {
         date: new Date(date).toISOString(),
         location,
         isOfficial,
+        sport,
         championshipId: championshipId || null,
         status: isFinished ? 'FINISHED' : 'SCHEDULED'
       }
@@ -245,7 +246,7 @@ export function MatchCreatePage() {
                  <input
                     type="number"
                     value={score1}
-                    onChange={e => setScore1(parseInt(e.target.value))}
+                    onChange={e => setScore1(parseInt(e.target.value) || 0)}
                     className="w-24 h-16 bg-gray-50 dark:bg-navy-900 border-none rounded-2xl text-center text-3xl font-black text-gray-900 dark:text-white outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
                  />
               </div>
@@ -274,7 +275,7 @@ export function MatchCreatePage() {
                  <input
                     type="number"
                     value={score2}
-                    onChange={e => setScore2(parseInt(e.target.value))}
+                    onChange={e => setScore2(parseInt(e.target.value) || 0)}
                     className="w-24 h-16 bg-gray-50 dark:bg-navy-900 border-none rounded-2xl text-center text-3xl font-black text-gray-900 dark:text-white outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
                  />
               </div>
